@@ -3836,7 +3836,9 @@ void Spell::_cast(bool skipCheck)
                 for (Unit::ControlSet::iterator itr = playerCaster->m_Controlled.begin(); itr != playerCaster->m_Controlled.end(); ++itr)
                     if (Unit* pet = *itr)
                         if (pet->IsAlive() && pet->GetTypeId() == TYPEID_UNIT)
-                            pet->ToCreature()->AI()->OwnerAttacked(m_targets.GetUnitTarget());
+                            if (Creature* creaturePet = pet->ToCreature()) // Added check for pet->ToCreature() not being nullptr
+                                if (creaturePet->AI()) // Added check for creaturePet->AI() not being nullptr
+                                    creaturePet->AI()->OwnerAttacked(m_targets.GetUnitTarget());
     }
 
     SetExecutedCurrently(true);
