@@ -1,0 +1,3 @@
+[submodule "modules"]
+path = modules
+url = https://github.com/lovewormcn/mod-playerbots
