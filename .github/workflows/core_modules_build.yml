@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     name: modules build on latest ubuntu
     if: |
-      github.repository == 'azerothcore/azerothcore-wotlk'
+      github.repository == 'liyunfan1223/azerothcore-wotlk'
       && !github.event.pull_request.draft
       && (
         github.ref_name == 'master'

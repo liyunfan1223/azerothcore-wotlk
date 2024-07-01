@@ -11,8 +11,7 @@ ccache -s
 cd var/build/obj
 
 time cmake ../../../ \
--DTOOLS=1 \
--DBUILD_TESTING=1 \
+-DTOOLS_BUILD=all \
 -DSCRIPTS=static \
 -DCMAKE_BUILD_TYPE=Release \
 -DMYSQL_ADD_INCLUDE_PATH=/usr/local/include \
@@ -22,9 +21,6 @@ time cmake ../../../ \
 -DOPENSSL_INCLUDE_DIR="$OPENSSL_ROOT_DIR/include" \
 -DOPENSSL_SSL_LIBRARIES="$OPENSSL_ROOT_DIR/lib/libssl.dylib" \
 -DOPENSSL_CRYPTO_LIBRARIES="$OPENSSL_ROOT_DIR/lib/libcrypto.dylib" \
--DWITH_WARNINGS=1 \
--DCMAKE_C_FLAGS="-Werror" \
--DCMAKE_CXX_FLAGS="-Werror" \
 -DCMAKE_C_COMPILER_LAUNCHER=ccache \
 -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
 -DUSE_SCRIPTPCH=0 \
