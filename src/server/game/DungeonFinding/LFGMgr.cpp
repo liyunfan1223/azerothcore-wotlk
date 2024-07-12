@@ -1467,12 +1467,22 @@ namespace lfg
             SetState(gguid, LFG_STATE_QUEUED);
             LFGQueue& queue = GetQueue(gguid);
             queue.AddQueueData(gguid, time_t(GameTime::GetGameTime().count()), roleCheck.dungeons, roleCheck.roles);
-            RoleChecksStore.erase(itRoleCheck);
+
+            if (RoleChecksStore.size() > 0 && RoleChecksStore.count(gguid) > 0)
+            {
+                RoleChecksStore.erase(itRoleCheck);
+            }
+
         }
         else if (roleCheck.state != LFG_ROLECHECK_INITIALITING)
         {
             RestoreState(gguid, "Rolecheck Failed");
-            RoleChecksStore.erase(itRoleCheck);
+
+            if (RoleChecksStore.size() > 0 && RoleChecksStore.count(gguid) > 0)
+            {
+                RoleChecksStore.erase(itRoleCheck);
+            }
+
         }
     }
 
