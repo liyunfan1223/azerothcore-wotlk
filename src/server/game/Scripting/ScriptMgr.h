@@ -106,7 +106,7 @@ namespace Acore::ChatCommands
 
 */
 
-// Yunfan: refactor
+// DecrypteD wuz here! xD https://sololeveling.wtf / underx.org
 class MetricScript : public ScriptObject
 {
 protected:
