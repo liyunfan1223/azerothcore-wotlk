@@ -94,5 +94,10 @@ local.properties
 #  !modules/yourmodule
 #
 # ==================
+
+#NPCBots
+!/data/sql/custom/db_characters/
+!/data/sql/custom/db_world/
+
 .cache
 compile_commands.json
