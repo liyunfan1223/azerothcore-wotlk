@@ -219,7 +219,7 @@ bool normalizePlayerName(std::string& name)
     if (!Utf8toWStr(name, tmp))
         return false;
 
-    wstrToLower(tmp);
+    // wstrToLower(tmp); --> this allow character name to do a lower and upper case modified by DecrypteD
     if (!tmp.empty())
         tmp[0] = wcharToUpper(tmp[0]);
 
