@@ -25,6 +25,10 @@
 #include "SpellMgr.h"
 #include "UnitAI.h"
 
+//npcbot
+#include "botmgr.h"
+//end npcbot
+
 namespace
 {
     template<typename T>
@@ -59,7 +63,7 @@ ScriptMgr* ScriptMgr::instance()
     return &instance;
 }
 
-// DecrypteD wuz here! xD https://sololeveling.wtf / underx.org
+// Yunfan: refactor
 MetricScript::MetricScript(const char* name) : ScriptObject(name)
 {
     ScriptRegistry<MetricScript>::AddScript(this);
@@ -76,6 +80,10 @@ void ScriptMgr::Initialize()
     LOG_INFO("server.loading", " ");
 
     AddSC_SmartScripts();
+
+    //npcbot: load bot scripts here
+    AddNpcBotScripts();
+    //end npcbot
 
     // LFGScripts
     lfg::AddSC_LFGScripts();
