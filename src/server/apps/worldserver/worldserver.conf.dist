@@ -4446,6 +4446,26 @@ Debug.Arena = 0
 #
 ###################################################################################################
 
+# PVP Elite Announcers#
+###################
+#
+#     KilledByCreature.Announcer
+#        Announce Player Killed by Creature to server.
+#        Default:     1 (Default)
+#                      0 (Disabled)
+
+KilledByCreature.Announcer = 1
+
+#
+#     PvPKill.Announcer
+#        Announce Player Killed by PVP to server.
+#        Default:     1 (Default)
+#                      0 (Disabled)
+
+PvPKill.Announcer = 1
+
+#
+
 ###################################################################################################
 # NPCBOT CONFIGURATION
 #
@@ -4472,7 +4492,7 @@ NpcBot.LogToDB = 1
 #                     0,1,2,3,4,5,6,7,8 - (1 per 10 levels)
 #        Max:         39
 
-NpcBot.MaxBots = 39,39,39,39,39,39,39,39,39
+NpcBot.MaxBots = 2,2,2,2,2,2,2,2,2
 
 #
 #    NpcBot.MaxBotsPerClass
