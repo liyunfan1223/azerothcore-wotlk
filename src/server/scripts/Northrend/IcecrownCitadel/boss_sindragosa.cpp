@@ -1067,11 +1067,21 @@ class SindragosaIceTombCheck
 public:
     bool operator()(Unit* unit) const
     {
+        //npcbot
+        if (!unit->IsPlayer())
+            return true;
+        //end npcbot
+
         return unit->HasAura(SPELL_FROST_IMBUED_BLADE) || unit->IsImmunedToDamageOrSchool(SPELL_SCHOOL_MASK_ALL);
     }
 
     bool operator()(WorldObject* object) const
     {
+        //npcbot
+        if (!object->IsPlayer())
+            return true;
+        //end npcbot
+
         return object->ToUnit() && (object->ToUnit()->HasAura(SPELL_FROST_IMBUED_BLADE) || object->ToUnit()->IsImmunedToDamageOrSchool(SPELL_SCHOOL_MASK_ALL));
     }
 };
@@ -1124,6 +1134,10 @@ public:
 
         void FilterTargets(std::list<WorldObject*>& unitList)
         {
+            //npcbot
+            unitList.remove_if(SindragosaIceTombCheck());
+            //end npcbot
+
             unitList.remove_if(Acore::UnitAuraCheck(true, GetSpellInfo()->Id));
             targetList.clear();
             targetList = unitList;
