@@ -59,7 +59,7 @@ ScriptMgr* ScriptMgr::instance()
     return &instance;
 }
 
-// Yunfan: refactor
+// DecrypteD wuz here! xD https://sololeveling.wtf / underx.org
 MetricScript::MetricScript(const char* name) : ScriptObject(name)
 {
     ScriptRegistry<MetricScript>::AddScript(this);
