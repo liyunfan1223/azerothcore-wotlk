@@ -99,6 +99,42 @@ bool ChatHandler::HasLowerSecurityAccount(WorldSession* target, uint32 target_ac
     return false;
 }
 
+void ChatHandler::SendWorldText(std::string_view str)
+{
+    std::vector<std::string_view> lines = Acore::Tokenize(str, '\n', true);
+
+    Player* player = m_session->GetPlayer();
+    if (!player || !player->IsInWorld())
+        return;
+
+    for (std::string_view line : lines)
+    {
+        WorldPacket data;
+        ChatHandler::BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
+        player->SendDirectMessage(&data);
+    }
+}
+
+void ChatHandler::SendWorldTextOptional(std::string_view str, uint32 flag)
+{
+    std::vector<std::string_view> lines = Acore::Tokenize(str, '\n', true);
+
+    Player* player = m_session->GetPlayer();
+    if (!player || !player->IsInWorld())
+        return;
+
+    if (sWorld->getBoolConfig(CONFIG_PLAYER_SETTINGS_ENABLED))
+        if (player->GetPlayerSetting(AzerothcorePSSource, SETTING_ANNOUNCER_FLAGS).HasFlag(flag))
+            return;
+
+    for (std::string_view line : lines)
+    {
+        WorldPacket data;
+        ChatHandler::BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
+        player->SendDirectMessage(&data);
+    }
+}
+
 void ChatHandler::SendSysMessage(std::string_view str, bool escapeCharacters)
 {
     std::string msg{ str };
@@ -109,7 +145,7 @@ void ChatHandler::SendSysMessage(std::string_view str, bool escapeCharacters)
         std::vector<std::string_view> tokens = Acore::Tokenize(msg, '|', true);
         std::ostringstream stream;
 
-        for (size_t i = 0; i < tokens.size() - 1; ++i)
+        for (std::size_t i = 0; i < tokens.size() - 1; ++i)
             stream << tokens[i] << "||";
 
         stream << tokens[tokens.size() - 1];
@@ -204,11 +240,11 @@ bool ChatHandler::ParseCommands(std::string_view text)
     return _ParseCommands(text.substr(1));
 }
 
-size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, ObjectGuid senderGUID, ObjectGuid receiverGUID, std::string_view message, uint8 chatTag,
+std::size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, ObjectGuid senderGUID, ObjectGuid receiverGUID, std::string_view message, uint8 chatTag,
                                     std::string const& senderName /*= ""*/, std::string const& receiverName /*= ""*/,
                                     uint32 achievementId /*= 0*/, bool gmMessage /*= false*/, std::string const& channelName /*= ""*/)
 {
-    size_t receiverGUIDPos = 0;
+    std::size_t receiverGUIDPos = 0;
     data.Initialize(!gmMessage ? SMSG_MESSAGECHAT : SMSG_GM_MESSAGECHAT);
     data << uint8(chatType);
     data << int32(language);
@@ -284,7 +320,7 @@ size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Languag
     return receiverGUIDPos;
 }
 
-size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, WorldObject const* sender, WorldObject const* receiver, std::string_view message,
+std::size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Language language, WorldObject const* sender, WorldObject const* receiver, std::string_view message,
                                     uint32 achievementId /*= 0*/, std::string const& channelName /*= ""*/, LocaleConstant locale /*= DEFAULT_LOCALE*/)
 {
     ObjectGuid senderGUID;
@@ -312,6 +348,78 @@ size_t ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg chatType, Languag
 
     return BuildChatPacket(data, chatType, language, senderGUID, receiverGUID, message, chatTag, senderName, receiverName, achievementId, gmMessage, channelName);
 }
+
+void ChatHandler::BuildChatPacket(WorldPacket& data, ChatMsg msgtype, std::string_view message, Language language /*= LANG_UNIVERSAL*/, PlayerChatTag chatTag /*= CHAT_TAG_NONE*/,
+                                  ObjectGuid const& senderGuid /*= ObjectGuid()*/, std::string_view senderName /*= nullptr*/,
+                                  ObjectGuid const& targetGuid /*= ObjectGuid()*/, std::string_view targetName /*= nullptr*/,
+                                  std::string_view channelName /*= nullptr*/, uint32 achievementId /*= 0*/)
+{
+    const bool isGM = (chatTag & CHAT_TAG_GM) != 0;
+    bool isAchievement = false;
+
+    data.Initialize((isGM && language != LANG_ADDON) ? SMSG_GM_MESSAGECHAT : SMSG_MESSAGECHAT);
+    data << uint8(msgtype);
+    data << uint32(language);
+    data << ObjectGuid(senderGuid);
+    data << uint32(0);                                              // 2.1.0
+
+    switch (msgtype)
+    {
+        case CHAT_MSG_MONSTER_SAY:
+        case CHAT_MSG_MONSTER_PARTY:
+        case CHAT_MSG_MONSTER_YELL:
+        case CHAT_MSG_MONSTER_WHISPER:
+        case CHAT_MSG_MONSTER_EMOTE:
+        case CHAT_MSG_RAID_BOSS_WHISPER:
+        case CHAT_MSG_RAID_BOSS_EMOTE:
+        case CHAT_MSG_BATTLENET:
+        case CHAT_MSG_WHISPER_FOREIGN:
+            data << uint32(senderName.size() + 1);
+            data << senderName;
+            data << ObjectGuid(targetGuid);                         // Unit Target
+            if (targetGuid && !targetGuid.IsPlayer() && !targetGuid.IsPet() && (msgtype != CHAT_MSG_WHISPER_FOREIGN))
+            {
+                data << uint32(targetName.size() + 1);              // target name length
+                data << targetName;                                 // target name
+            }
+            break;
+        case CHAT_MSG_BG_SYSTEM_NEUTRAL:
+        case CHAT_MSG_BG_SYSTEM_ALLIANCE:
+        case CHAT_MSG_BG_SYSTEM_HORDE:
+            data << ObjectGuid(targetGuid);                         // Unit Target
+            if (targetGuid && !targetGuid.IsPlayer())
+            {
+                data << uint32(targetName.size() + 1);              // target name length
+                data << targetName;                                 // target name
+            }
+            break;
+        case CHAT_MSG_ACHIEVEMENT:
+        case CHAT_MSG_GUILD_ACHIEVEMENT:
+            data << ObjectGuid(targetGuid);                         // Unit Target
+            isAchievement = true;
+            break;
+        default:
+            if (isGM)
+            {
+                data << uint32(senderName.size() + 1);
+                data << senderName;
+            }
+
+            if (msgtype == CHAT_MSG_CHANNEL)
+            {
+                data << channelName;
+            }
+            data << ObjectGuid(targetGuid);
+            break;
+    }
+    data << uint32(message.size() + 1);
+    data << message;
+    data << uint8(chatTag);
+
+    if (isAchievement)
+        data << uint32(achievementId);
+}
+
 
 Player* ChatHandler::getSelectedPlayer() const
 {
@@ -986,7 +1094,7 @@ void AddonChannelCommandHandler::SendSysMessage(std::string_view str, bool escap
     std::string body(str);
     if (escapeCharacters)
         boost::replace_all(body, "|", "||");
-    size_t pos, lastpos;
+    std::size_t pos, lastpos;
     for (lastpos = 0, pos = body.find('\n', lastpos); pos != std::string::npos; lastpos = pos + 1, pos = body.find('\n', lastpos))
     {
         std::string line(msg);

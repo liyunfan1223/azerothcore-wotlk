@@ -839,16 +839,6 @@ enum EnviromentalDamage
     DAMAGE_FALL_TO_VOID = 6                                 // custom case for fall without durability loss
 };
 
-enum PlayerChatTag
-{
-    CHAT_TAG_NONE       = 0x00,
-    CHAT_TAG_AFK        = 0x01,
-    CHAT_TAG_DND        = 0x02,
-    CHAT_TAG_GM         = 0x04,
-    CHAT_TAG_COM        = 0x08, // Commentator tag. Do not exist in clean client
-    CHAT_TAG_DEV        = 0x10,
-};
-
 enum PlayedTimeIndex
 {
     PLAYED_TIME_TOTAL = 0,
@@ -1609,7 +1599,7 @@ public:
     QuestStatusMap& getQuestStatusMap() { return m_QuestStatus; }
     QuestStatusSaveMap& GetQuestStatusSaveMap() { return m_QuestStatusSave; }
 
-    [[nodiscard]] size_t GetRewardedQuestCount() const { return m_RewardedQuests.size(); }
+    [[nodiscard]] std::size_t GetRewardedQuestCount() const { return m_RewardedQuests.size(); }
     [[nodiscard]] bool IsQuestRewarded(uint32 quest_id) const
     {
         return m_RewardedQuests.find(quest_id) != m_RewardedQuests.end();
