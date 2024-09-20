@@ -747,7 +747,7 @@ void Map::UpdatePlayerAreaStats(uint32 oldArea, uint32 newArea)
     // Sanity check, we're leaving an area (that isn't the default) and there's no players there (should be at least one)
     if (oldArea && oldAreaCount == 0)
     {
-        sLog->outMisc("Player left area %u, when no players in area!", oldArea);
+        LOG_ERROR("maps", "Player left area {}, when no players in area!", oldArea);
         return;
     }
     // If there is already a count then the iterator will exist, use it to subtract one.
