@@ -1486,6 +1486,14 @@ void World::LoadConfigSettings(bool reload)
     // Realm Availability
     _bool_configs[CONFIG_REALM_LOGIN_ENABLED] = sConfigMgr->GetOption<bool>("World.RealmAvailability", true);
 
+    _bool_configs[CONFIG_DYNAMIC_SPAWN_ENABLED] = sConfigMgr->GetOption<bool>("DynamicRespawn.Enabled", true);
+    _int_configs[CONFIG_DYNAMIC_SPAWN_PLAYERS_TO_DECREASE] = sConfigMgr->GetOption<int32>("DynamicRespawn.PlayersToDecrease", 6); // Maczuga
+    _float_configs[CONFIG_DYNAMIC_SPAWN_RESPAWN_DECREASE] = sConfigMgr->GetOption<float>("DynamicRespawn.RespawnPctDecrease", 25.0f); // Maczuga
+    _int_configs[CONFIG_DYNAMIC_SPAWN_CREATURE_MIN_RESPAWN_TIME] = sConfigMgr->GetOption<int32>("DynamicRespawn.CreatureMinRespawn", 60); // Maczuga
+    _int_configs[CONFIG_DYNAMIC_SPAWN_GAMEOBJECT_MIN_RESPAWN_TIME] = sConfigMgr->GetOption<int32>("DynamicRespawn.GameObjectMinRespawn", 60); // Maczuga
+    _int_configs[CONFIG_DYNAMIC_SPAWN_CREATURE_MAX_MIN_RESPAWN_TIME] = sConfigMgr->GetOption<int32>("DynamicRespawn.CreatureMaxMinRespawn", 15); // Maczuga
+    _int_configs[CONFIG_DYNAMIC_SPAWN_GAMEOBJECT_MAX_MIN_RESPAWN_TIME] = sConfigMgr->GetOption<int32>("DynamicRespawn.GameObjectMaxMinRespawn", 15); // Maczuga
+
     // call ScriptMgr if we're reloading the configuration
     sScriptMgr->OnAfterConfigLoad(reload);
 }

@@ -4406,6 +4406,39 @@ Daze.Enabled = 1
 
 #
 ###################################################################################################
+###################################################################################################
+###########################
+###   DYNAMIC RESPAWN   ###
+###########################
+#
+#    DynamicRespawn.Enabled
+#        Description: Enables the dynamic respawn system.
+#        Default:     1 - true
+DynamicRespawn.Enabled = 1
+#    DynamicRespawn.PlayersToDecrease
+#        Description: Required player amount in area to decrease spawn time for creatures.
+#        Default:     6  - to avoid 5-man party abusing on launch.
+DynamicRespawn.PlayersToDecrease = 6
+#    DynamicRespawn.RespawnPctDecrease
+#        Description: Percentage amount of time that will be decreased then X players appears in same zone.
+#        Default:     25 (%)
+DynamicRespawn.RespawnPctDecrease = 25
+#    DynamicRespawn.CreatureMinRespawn
+#        Description: Creatures below this spawn time won't be included.
+#        Default:     30 (seconds)
+DynamicRespawn.CreatureMinRespawn = 30
+#    DynamicRespawn.GameObjectMinRespawn
+#        Description: Creatures below this spawn time won't be included.
+#        Default:     30 (seconds)
+DynamicRespawn.GameObjectMinRespawn = 30
+#    DynamicRespawn.CreatureMaxMinRespawn
+#        Description: Maximum minimum spawn time, that can be set for creature.
+#        Default:     15 (seconds)
+DynamicRespawn.CreatureMaxMinRespawn    = 15
+#    DynamicRespawn.GameObjectMaxMinRespawn
+#        Description: Maximum minimum spawn time, that can be set for gameobject.
+#        Default:     15 (seconds)
+DynamicRespawn.GameObjectMaxMinRespawn  = 15
 
 ###################################################################################################
 # DEBUG

@@ -70,7 +70,8 @@ public:
     void Update(uint32 time) override;  // overwrited Unit::Update
     void GetRespawnPosition(float& x, float& y, float& z, float* ori = nullptr, float* dist = nullptr) const;
 
-    void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
+    //void SetCorpseDelay(uint32 delay) { m_corpseDelay = delay; }
+    void SetCorpseDelay(uint32 delay) { m_baseCorpseDelay = m_corpseDelay = delay; }
     void SetCorpseRemoveTime(uint32 delay);
     [[nodiscard]] uint32 GetCorpseDelay() const { return m_corpseDelay; }
     [[nodiscard]] bool IsRacialLeader() const { return GetCreatureTemplate()->RacialLeader; }
@@ -445,7 +446,9 @@ protected:
     time_t m_respawnTime;                               // (secs) time of next respawn
     time_t m_respawnedTime;                             // (secs) time when creature respawned
     uint32 m_respawnDelay;                              // (secs) delay between corpse disappearance and respawning
+    uint32 m_baseRespawnDelay;                          // (secs) base delay between corpse disappearance and respawning
     uint32 m_corpseDelay;                               // (secs) delay between death and corpse disappearance
+    uint32 m_baseCorpseDelay;                           // (secs) base delay between death and corpse disappearance
     float m_wanderDistance;
     uint32 m_boundaryCheckTime;                         // (msecs) remaining time for next evade boundary check
     uint16 m_transportCheckTimer;

@@ -1170,6 +1170,7 @@ void Player::UpdateHonorFields()
 
 void Player::UpdateArea(uint32 newArea)
 {
+    GetMap()->UpdatePlayerAreaStats(m_areaUpdateId, newArea);
     // pussywizard: inform instance, needed for Icecrown Citadel
     if (InstanceScript* instance = GetInstanceScript())
         instance->OnPlayerAreaUpdate(this, m_areaUpdateId, newArea);

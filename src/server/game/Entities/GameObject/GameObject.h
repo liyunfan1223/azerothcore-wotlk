@@ -184,7 +184,11 @@ public:
     [[nodiscard]] time_t GetRespawnTime() const { return m_respawnTime; }
     [[nodiscard]] time_t GetRespawnTimeEx() const;
 
-    void SetRespawnTime(int32 respawn);
+    void SetRespawnTime(int32 respawn)
+    {
+        m_respawnTime = respawn > 0 ? time(NULL) + respawn : 0;
+        m_baseRespawnDelayTime = m_respawnDelayTime = respawn > 0 ? respawn : 0;
+    }
     void SetRespawnDelay(int32 respawn);
     void Respawn();
     [[nodiscard]] bool isSpawned() const
@@ -371,6 +375,7 @@ protected:
     uint32      m_spellId;
     time_t      m_respawnTime;                          // (secs) time of next respawn (or despawn if GO have owner()),
     uint32      m_respawnDelayTime;                     // (secs) if 0 then current GO state no dependent from timer
+    uint32      m_baseRespawnDelayTime;                 // (secs) base if 0 then current GO state no dependent from timer
     uint32      m_despawnDelay;
     Seconds     m_despawnRespawnTime;                   // override respawn time after delayed despawn
     Seconds     m_restockTime;

@@ -484,6 +484,12 @@ public:
 
     typedef MapRefMgr PlayerList;
     [[nodiscard]] PlayerList const& GetPlayers() const { return m_mapRefMgr; }
+    uint32 GetPlayersInAreaCount(uint32 areaId) const
+        {
+            auto newItr = _areaPlayerCountMap.find(areaId);
+            if (newItr != _areaPlayerCountMap.end()) return newItr->second;
+            return 0;
+        }
 
     //per-map script storage
     void ScriptsStart(std::map<uint32, std::multimap<uint32, ScriptInfo> > const& scripts, uint32 id, Object* source, Object* target);
@@ -588,7 +594,9 @@ public:
         return time_t(0);
     }
 
-    void SaveCreatureRespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime);
+    void UpdatePlayerAreaStats(uint32 oldArea, uint32 newArea);
+    void SaveCreatureRespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime, uint32 areaId = 0);
+    //void SaveCreatureRespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime);
     void RemoveCreatureRespawnTime(ObjectGuid::LowType dbGuid);
     void SaveGORespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime);
     void RemoveGORespawnTime(ObjectGuid::LowType dbGuid);
@@ -781,6 +789,7 @@ private:
 
     std::unordered_map<ObjectGuid::LowType /*dbGUID*/, time_t> _creatureRespawnTimes;
     std::unordered_map<ObjectGuid::LowType /*dbGUID*/, time_t> _goRespawnTimes;
+    std::unordered_map<uint32, uint32> _areaPlayerCountMap;
 
     ZoneDynamicInfoMap _zoneDynamicInfo;
     uint32 _defaultLight;
