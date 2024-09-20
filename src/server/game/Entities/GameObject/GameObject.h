@@ -184,11 +184,7 @@ public:
     [[nodiscard]] time_t GetRespawnTime() const { return m_respawnTime; }
     [[nodiscard]] time_t GetRespawnTimeEx() const;
 
-    void SetRespawnTime(int32 respawn)
-    {
-        m_respawnTime = respawn > 0 ? time(NULL) + respawn : 0;
-        m_baseRespawnDelayTime = m_respawnDelayTime = respawn > 0 ? respawn : 0;
-    }
+    void SetRespawnTime(int32 respawn);
     void SetRespawnDelay(int32 respawn);
     void Respawn();
     [[nodiscard]] bool isSpawned() const

@@ -1319,7 +1319,12 @@ bool GameObject::IsInvisibleDueToDespawn() const
 
 void GameObject::SetRespawnTime(int32 respawn)
 {
+    /*{
+    m_respawnTime = respawn > 0 ? time(NULL) + respawn : 0;
+    m_baseRespawnDelayTime = m_respawnDelayTime = respawn > 0 ? respawn : 0;
+}*/
     m_respawnTime = respawn > 0 ? GameTime::GetGameTime().count() + respawn : 0;
+    m_baseRespawnDelayTime = m_respawnDelayTime = respawn > 0 ? respawn : 0;
     SetRespawnDelay(respawn);
     if (respawn && !m_spawnedByDefault)
     {

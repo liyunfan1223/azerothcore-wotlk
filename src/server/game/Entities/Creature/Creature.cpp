@@ -1456,7 +1456,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
     }
 
     data.spawntimesecs = m_respawnDelay;
-    data.spawntimesecs = m_baseRespawnDelay
+    data.spawntimesecs = m_baseRespawnDelay;
     // prevent add data integrity problems
     data.wander_distance = GetDefaultMovementType() == IDLE_MOTION_TYPE ? 0.0f : m_wanderDistance;
     data.currentwaypoint = 0;
@@ -2643,7 +2643,7 @@ void Creature::SaveRespawnTime()
     if (IsSummon() || !m_spawnId || (m_creatureData && !m_creatureData->dbData))
         return;
 
-    GetMap()->SaveCreatureRespawnTime(m_spawnId, m_respawnTime, , GetCreatureTemplate()->rank == CREATURE_ELITE_NORMAL ? GetAreaId() : 0);
+    GetMap()->SaveCreatureRespawnTime(m_spawnId, m_respawnTime, GetCreatureTemplate()->rank == CREATURE_ELITE_NORMAL ? GetAreaId() : 0);
 }
 
 bool Creature::CanCreatureAttack(Unit const* victim, bool skipDistCheck) const
