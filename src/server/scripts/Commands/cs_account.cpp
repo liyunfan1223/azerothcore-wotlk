@@ -390,7 +390,11 @@ public:
             Field* fieldsDB = result->Fetch();
             std::string name = fieldsDB[0].Get<std::string>();
             uint32 account = fieldsDB[1].Get<uint32>();
-
+            
+            // Skip accounts that have the RNDBOT prefix
+            if (name.rfind("RNDBOT", 0) == 0)
+            continue;
+            
             ///- Get the username, last IP and GM level of each account
             // No SQL injection. account is uint32.
             LoginDatabasePreparedStatement* loginStmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_INFO);
