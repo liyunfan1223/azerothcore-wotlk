@@ -365,7 +365,7 @@ public:
         return true;
     }
 
-    static bool HandleAccountOnlineListCommand(ChatHandler* handler, char const* /*args*/)
+static bool HandleAccountOnlineListCommand(ChatHandler* handler, char const* /*args*/)
 {
     /// Get the session map to iterate through currently online players
     SessionMap const& sessions = sWorld->GetAllSessions();
@@ -392,9 +392,23 @@ public:
         if (!player)
             continue;
 
-        // Get account and character name
+        // Get account ID and character name
         std::string playerName = player->GetName();
-        std::string accountName = session->GetAccountName();
+        uint32 accountId = session->GetAccountId();
+
+        // Retrieve account name from LoginDatabase using the account ID
+        LoginDatabasePreparedStatement* loginStmt = LoginDatabase.GetPreparedStatement(LOGIN_SEL_ACCOUNT_NAME_BY_ID);
+        loginStmt->SetData(0, accountId);
+        PreparedQueryResult result = LoginDatabase.Query(loginStmt);
+
+        if (!result)
+        {
+            handler->PSendSysMessage(LANG_ACCOUNT_LIST_ERROR, playerName.c_str());
+            continue;
+        }
+
+        Field* fields = result->Fetch();
+        std::string accountName = fields[0].Get<std::string>();
 
         // Skip bot accounts that start with RNDBOT prefix
         if (accountName.rfind("RNDBOT", 0) == 0)
@@ -410,6 +424,7 @@ public:
     handler->SendSysMessage(LANG_ACCOUNT_LIST_BAR);
     return true;
 }
+
 
     static bool HandleAccountRemoveLockCountryCommand(ChatHandler* handler, char const* args)
     {
