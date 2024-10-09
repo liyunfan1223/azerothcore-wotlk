@@ -313,57 +313,66 @@ public:
         return true;
     }
 
-    /// Delete a user account and all associated characters in this realm
-    /// \todo This function has to be enhanced to respect the login/realm split (delete char, delete account chars in realm then delete account)
-    static bool HandleAccountDeleteCommand(ChatHandler* handler, char const* args)
+static bool HandleAccountOnlineListCommand(ChatHandler* handler, char const* /*args*/)
+{
+    /// Get the session map to iterate through currently online players
+    SessionMap const& sessions = sWorld->GetAllSessions();
+
+    if (sessions.empty())
     {
-        if (!*args)
-            return false;
-
-        ///- Get the account name from the command line
-        char* account = strtok((char*)args, " ");
-        if (!account)
-            return false;
-
-        std::string accountName = account;
-        if (!Utf8ToUpperOnlyLatin(accountName))
-        {
-            handler->SendErrorMessage(LANG_ACCOUNT_NOT_EXIST, accountName.c_str());
-            return false;
-        }
-
-        uint32 accountId = AccountMgr::GetId(accountName);
-        if (!accountId)
-        {
-            handler->SendErrorMessage(LANG_ACCOUNT_NOT_EXIST, accountName.c_str());
-            return false;
-        }
-
-        /// Commands not recommended call from chat, but support anyway
-        /// can delete only for account with less security
-        /// This is also reject self apply in fact
-        if (handler->HasLowerSecurityAccount(nullptr, accountId, true))
-            return false;
-
-        AccountOpResult result = AccountMgr::DeleteAccount(accountId);
-        switch (result)
-        {
-            case AOR_OK:
-                handler->PSendSysMessage(LANG_ACCOUNT_DELETED, accountName);
-                break;
-            case AOR_NAME_NOT_EXIST:
-                handler->SendErrorMessage(LANG_ACCOUNT_NOT_EXIST, accountName.c_str());
-                return false;
-            case AOR_DB_INTERNAL_ERROR:
-                handler->SendErrorMessage(LANG_ACCOUNT_NOT_DELETED_SQL_ERROR, accountName.c_str());
-                return false;
-            default:
-                handler->SendErrorMessage(LANG_ACCOUNT_NOT_DELETED, accountName.c_str());
-                return false;
-        }
-
+        handler->SendSysMessage(LANG_ACCOUNT_LIST_EMPTY);
         return true;
     }
+
+    /// Display the list of account/characters online
+    handler->SendSysMessage(LANG_ACCOUNT_LIST_BAR_HEADER);
+    handler->SendSysMessage(LANG_ACCOUNT_LIST_HEADER);
+    handler->SendSysMessage(LANG_ACCOUNT_LIST_BAR);
+
+    /// Iterate through all active sessions to retrieve online player info
+    for (auto const& sessionPair : sessions)
+    {
+        WorldSession* session = sessionPair.second;
+        if (!session)
+            continue;
+
+        Player* player = session->GetPlayer();
+        if (!player)
+            continue;
+
+        // Get account ID and character name
+        std::string playerName = player->GetName();
+        uint32 accountId = session->GetAccountId();
+
+        // Retrieve account name from LoginDatabase using the account ID
+        LoginDatabasePreparedStatement* loginStmt = LoginDatabase.GetPreparedStatement(LOGIN_GET_USERNAME_BY_ID);
+        loginStmt->SetData(0, accountId);
+        PreparedQueryResult result = LoginDatabase.Query(loginStmt);
+
+        if (!result)
+        {
+            handler->PSendSysMessage(LANG_ACCOUNT_LIST_ERROR, playerName.c_str());
+            continue;
+        }
+
+        Field* fields = result->Fetch();
+        std::string accountName = fields[0].Get<std::string>();
+
+        // Skip bot accounts that start with RNDBOT prefix
+        if (accountName.rfind("RNDBOT", 0) == 0)
+            continue;
+
+        // Send the character and account info to the handler
+        handler->PSendSysMessage(LANG_ACCOUNT_LIST_LINE,
+                                 accountName.c_str(), playerName.c_str(),
+                                 player->GetMapId(), player->GetZoneId(),
+                                 player->GetLevel());
+    }
+
+    handler->SendSysMessage(LANG_ACCOUNT_LIST_BAR);
+    return true;
+}
+
 
 static bool HandleAccountOnlineListCommand(ChatHandler* handler, char const* /*args*/)
 {
