@@ -337,7 +337,15 @@ void Object::DestroyForPlayer(Player* target, bool onDeath) const
 [[nodiscard]] ObjectGuid Object::GetGuidValue(uint16 index) const
 {
     ASSERT(index + 1 < m_valuesCount || PrintIndexError(index, false));
-    return *((ObjectGuid*) &(m_uint32Values[index]));
+
+    if (m_uint32Values != nullptr)
+    {
+        return *((ObjectGuid*)&(m_uint32Values[index]));
+    }
+    else
+    {
+        return ObjectGuid::Empty;
+    }
 }
 
 void Object::BuildMovementUpdate(ByteBuffer* data, uint16 flags) const
