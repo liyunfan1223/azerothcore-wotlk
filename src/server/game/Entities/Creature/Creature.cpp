@@ -1459,8 +1459,7 @@ void Creature::SaveToDB(uint32 mapid, uint8 spawnMask, uint32 phaseMask)
         data.orientation = GetTransOffsetO();
     }
 
-    //data.spawntimesecs = m_respawnDelay;
-    data.spawntimesecs = m_baseRespawnDelay;
+    data.spawntimesecs = m_respawnDelay;
     // prevent add data integrity problems
     data.wander_distance = GetDefaultMovementType() == IDLE_MOTION_TYPE ? 0.0f : m_wanderDistance;
     data.currentwaypoint = 0;
