@@ -597,7 +597,6 @@ public:
 
     void UpdatePlayerAreaStats(uint32 oldArea, uint32 newArea);
     void SaveCreatureRespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime, uint32 areaId = 0);
-    //void SaveCreatureRespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime);
     void RemoveCreatureRespawnTime(ObjectGuid::LowType dbGuid);
     void SaveGORespawnTime(ObjectGuid::LowType dbGuid, time_t& respawnTime);
     void RemoveGORespawnTime(ObjectGuid::LowType dbGuid);

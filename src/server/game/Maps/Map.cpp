@@ -3404,7 +3404,6 @@ void Map::SaveCreatureRespawnTime(ObjectGuid::LowType spawnId, time_t& respawnTi
 
     uint8 respawnSpeedup = 0;
     
-    //if (GetInstanceResetPeriod() > 0 && respawnTime - now + 5 >= GetInstanceResetPeriod())
     if (GetInstanceResetPeriod() > 0 && diff + 5 >= GetInstanceResetPeriod())
         respawnTime = now + YEAR;
 
