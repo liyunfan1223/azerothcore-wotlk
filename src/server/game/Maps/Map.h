@@ -484,12 +484,13 @@ public:
 
     typedef MapRefMgr PlayerList;
     [[nodiscard]] PlayerList const& GetPlayers() const { return m_mapRefMgr; }
+    
     uint32 GetPlayersInAreaCount(uint32 areaId) const
-        {
-            auto newItr = _areaPlayerCountMap.find(areaId);
-            if (newItr != _areaPlayerCountMap.end()) return newItr->second;
-            return 0;
-        }
+    {
+        auto newItr = _areaPlayerCountMap.find(areaId);
+        if (newItr != _areaPlayerCountMap.end()) return newItr->second;
+        return 0;
+    }
 
     //per-map script storage
     void ScriptsStart(std::map<uint32, std::multimap<uint32, ScriptInfo> > const& scripts, uint32 id, Object* source, Object* target);

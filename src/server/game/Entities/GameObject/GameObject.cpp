@@ -896,7 +896,7 @@ void GameObject::Update(uint32 diff)
                     return;
                 }
 
-                 if (sWorld->getBoolConfig(CONFIG_DYNAMIC_SPAWN_ENABLED) && !GetMap()->IsBattlegroundOrArena() && !GetMap()->Instanceable() && GetAreaId() != 0)
+            if (sWorld->getBoolConfig(CONFIG_DYNAMIC_SPAWN_ENABLED) && !GetMap()->IsBattlegroundOrArena() && !GetMap()->Instanceable() && GetAreaId() != 0)
             {
                 if (m_baseRespawnDelayTime >= sWorld->getIntConfig(CONFIG_DYNAMIC_SPAWN_GAMEOBJECT_MIN_RESPAWN_TIME))
                 {
@@ -1319,10 +1319,6 @@ bool GameObject::IsInvisibleDueToDespawn() const
 
 void GameObject::SetRespawnTime(int32 respawn)
 {
-    /*{
-    m_respawnTime = respawn > 0 ? time(NULL) + respawn : 0;
-    m_baseRespawnDelayTime = m_respawnDelayTime = respawn > 0 ? respawn : 0;
-}*/
     m_respawnTime = respawn > 0 ? GameTime::GetGameTime().count() + respawn : 0;
     m_baseRespawnDelayTime = m_respawnDelayTime = respawn > 0 ? respawn : 0;
     SetRespawnDelay(respawn);
