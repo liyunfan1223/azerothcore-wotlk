@@ -37,7 +37,7 @@ jobs:
         run: |
           tar -czvf azerothcore-windows.tar.gz -C ./env/dist .
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: azerothcore-windows
           path: azerothcore-windows.tar.gz
