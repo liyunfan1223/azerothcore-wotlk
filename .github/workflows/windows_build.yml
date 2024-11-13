@@ -1,10 +1,6 @@
 name: windows-build
 on:
-  push:
-    branches:
-      - 'master'
-  pull_request:
-    types: ['labeled', 'opened', 'synchronize', 'reopened']
+  workflow_dispatch:  # 添加手动触发
 
 concurrency:
   group: ${{ github.head_ref }} || concat(${{ github.ref }}, ${{ github.workflow }})
@@ -20,10 +16,6 @@ jobs:
     name: ${{ matrix.os }}
     env:
       BOOST_ROOT: C:\local\boost_1_82_0
-    if: |
-      github.repository == 'azerothcore/azerothcore-wotlk'
-      && !github.event.pull_request.draft
-      && (github.ref == 'refs/heads/master' || contains(github.event.pull_request.labels.*.name, 'run-build') || github.event.label.name == 'run-build')
     steps:
       - uses: actions/checkout@v4
       - name: ccache
@@ -38,4 +30,14 @@ jobs:
         shell: bash
         run: |
           export CTOOLS_BUILD=all
+          export CTYPE=RelWithDebInfo
           ./acore.sh compiler build
+      - name: Package Build Artifacts
+        if: success()
+        run: |
+          tar -czvf azerothcore-windows.tar.gz -C ./env/dist .
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: azerothcore-windows
+          path: azerothcore-windows.tar.gz
