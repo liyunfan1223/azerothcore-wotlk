@@ -7062,12 +7062,14 @@ void Player::SaveToDB(CharacterDatabaseTransaction trans, bool create, bool logo
     m_nextSave = sWorld->getIntConfig(CONFIG_INTERVAL_SAVE);
 
     //lets allow only players in world to be saved
+    // This is not desired for Playerbots as it breaks the initial first bot creaetion process.
+/*
     if (IsBeingTeleportedFar())
     {
         ScheduleDelayedOperation(DELAYED_SAVE_PLAYER);
         return;
     }
-
+*/
     // pussywizard: full save now, so clear partial additional saves
     m_additionalSaveTimer = 0;
     m_additionalSaveMask = 0;
