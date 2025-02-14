@@ -3297,6 +3297,51 @@ LFG.KickPreventionTimer = 900
 DungeonAccessRequirements.LFGLevelDBCOverride = 0
 
 #
+#    DungeonAccessRequirements.BypassLevelRequirement
+#
+#        Description: Bypass the level requirements set by LFG.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+DungeonAccessRequirements.BypassLevelRequirement = 1
+
+#
+#    DungeonAccessRequirements.BypassGearScoreRequirement
+#
+#        Description: Bypass Gear Score requirements set by LFG.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+DungeonAccessRequirements.BypassGearScoreRequirement = 1
+
+#
+#    DungeonAccessRequirements.BypassQuestsRequirement
+#
+#        Description: Bypass Quest requirements set by LFG.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+DungeonAccessRequirements.BypassQuestsRequirement = 1
+
+#
+#    DungeonAccessRequirements.BypassItemRequirement
+#
+#        Description: Bypass Item requirements set by LFG.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+DungeonAccessRequirements.BypassItemRequirement = 1
+
+#
+#    DungeonAccessRequirements.BypassAchievementRequirement
+#
+#        Description: Bypass Achievement requirements set by LFG.
+#        Default:     0 - (Disabled)
+#                     1 - (Enabled)
+
+DungeonAccessRequirements.BypassAchievementRequirement = 1
+
+#
 #    DungeonFinder.CastDeserter
 #
 #        Description: Cast Deserter to player who leave a dungeon prematurely
