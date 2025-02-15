@@ -1459,6 +1459,11 @@ void World::LoadConfigSettings(bool reload)
     _bool_configs[CONFIG_DUNGEON_ACCESS_REQUIREMENTS_PORTAL_CHECK_ILVL]      = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.PortalAvgIlevelCheck", false);
     _bool_configs[CONFIG_DUNGEON_ACCESS_REQUIREMENTS_LFG_DBC_LEVEL_OVERRIDE] = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.LFGLevelDBCOverride", false);
     _int_configs[CONFIG_DUNGEON_ACCESS_REQUIREMENTS_OPTIONAL_STRING_ID]      = sConfigMgr->GetOption<int32>("DungeonAccessRequirements.OptionalStringID", 0);
+    _bool_configs[CONFIG_DUNGEON_ACCESS_LEVEL_REQUIREMENTS_OVERIDE]          = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.BypassLevelRequirement", false);
+    _bool_configs[CONFIG_DUNGEON_ACCESS_GEARSCORE_REQUIREMENTS_OVERIDE]      = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.BypassGearScoreRequirement", false);
+    _bool_configs[CONFIG_DUNGEON_ACCESS_QUESTS_REQUIREMENTS_OVERIDE]         = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.BypassQuestsRequirement", false);
+    _bool_configs[CONFIG_DUNGEON_ACCESS_ITEMS_REQUIREMENTS_OVERIDE]          = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.BypassItemRequirement", false);
+    _bool_configs[CONFIG_DUNGEON_ACCESS_ACHIEVEMENT_REQUIREMENTS_OVERIDE]    = sConfigMgr->GetOption<bool>("DungeonAccessRequirements.BypassAchievementRequirement", false);
     _int_configs[CONFIG_NPC_EVADE_IF_NOT_REACHABLE] = sConfigMgr->GetOption<int32>("NpcEvadeIfTargetIsUnreachable", 5);
     _int_configs[CONFIG_NPC_REGEN_TIME_IF_NOT_REACHABLE_IN_RAID] = sConfigMgr->GetOption<int32>("NpcRegenHPTimeIfTargetIsUnreachable", 10);
     _bool_configs[CONFIG_REGEN_HP_CANNOT_REACH_TARGET_IN_RAID] = sConfigMgr->GetOption<bool>("NpcRegenHPIfTargetIsUnreachable", true);
