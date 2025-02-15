@@ -3321,7 +3321,7 @@ DungeonAccessRequirements.BypassGearScoreRequirement = 1
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-DungeonAccessRequirements.BypassQuestsRequirement = 1
+DungeonAccessRequirements.BypassQuestsRequirement = 0
 
 #
 #    DungeonAccessRequirements.BypassItemRequirement
@@ -3330,7 +3330,7 @@ DungeonAccessRequirements.BypassQuestsRequirement = 1
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-DungeonAccessRequirements.BypassItemRequirement = 1
+DungeonAccessRequirements.BypassItemRequirement = 0
 
 #
 #    DungeonAccessRequirements.BypassAchievementRequirement
@@ -3339,7 +3339,7 @@ DungeonAccessRequirements.BypassItemRequirement = 1
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-DungeonAccessRequirements.BypassAchievementRequirement = 1
+DungeonAccessRequirements.BypassAchievementRequirement = 0
 
 #
 #    DungeonFinder.CastDeserter

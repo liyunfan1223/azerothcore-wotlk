@@ -696,12 +696,12 @@ namespace lfg
 
             // if we have lockmap then there are no compatible dungeons
             // xinef: dont check compatibile dungeons for already running group (bind problems)
-            if (!isContinue)
-            {
-                GetCompatibleDungeons(dungeons, players, joinData.lockmap);
-                if (dungeons.empty())
-                    joinData.result = grp ? LFG_JOIN_PARTY_NOT_MEET_REQS : LFG_JOIN_NOT_MEET_REQS;
-            }
+            // if (!isContinue)
+            // {
+            //     GetCompatibleDungeons(dungeons, players, joinData.lockmap);
+            //     if (dungeons.empty())
+            //         joinData.result = grp ? LFG_JOIN_PARTY_NOT_MEET_REQS : LFG_JOIN_NOT_MEET_REQS;
+            // }
         }
 
         // pussywizard:
