@@ -633,10 +633,11 @@ namespace lfg
             {
                 joinData.result = LFG_JOIN_DESERTER;
             }
-            else if (dungeons.empty())
-            {
-                joinData.result = LFG_JOIN_NOT_MEET_REQS;
-            }
+            // else if (dungeons.empty())
+            // {
+            //     LOG_DEBUG("lfg", "Dungeons available for queue: {}", dungeons.size());
+            //     joinData.result = LFG_JOIN_NOT_MEET_REQS;
+            // }
             else if (grp)
             {
                 if (grp->GetMembersCount() > MAXGROUPSIZE)
