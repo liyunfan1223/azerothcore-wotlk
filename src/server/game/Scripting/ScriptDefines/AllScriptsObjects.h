@@ -58,7 +58,6 @@
 #include "PlayerScript.h"
 #include "ServerScript.h"
 #include "SpellScriptLoader.h"
-#include "TicketScript.h"
 #include "TransportScript.h"
 #include "UnitScript.h"
 #include "VehicleScript.h"

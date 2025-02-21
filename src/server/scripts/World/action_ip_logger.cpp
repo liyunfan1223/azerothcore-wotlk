@@ -179,19 +179,19 @@ public:
     }
 
     // CHARACTER_CREATE = 7
-    void OnPlayerCreate(Player* player) override
+    void OnCreate(Player* player) override
     {
         CharacterIPLogAction(player, CHARACTER_CREATE);
     }
 
     // CHARACTER_LOGIN = 8
-    void OnPlayerLogin(Player* player) override
+    void OnLogin(Player* player) override
     {
         CharacterIPLogAction(player, CHARACTER_LOGIN);
     }
 
     // CHARACTER_LOGOUT = 9
-    void OnPlayerLogout(Player* player) override
+    void OnLogout(Player* player) override
     {
         CharacterIPLogAction(player, CHARACTER_LOGOUT);
     }
@@ -273,13 +273,13 @@ public:
     }
 
     // CHARACTER_DELETE = 10
-    void OnPlayerDelete(ObjectGuid guid, uint32 accountId) override
+    void OnDelete(ObjectGuid guid, uint32 accountId) override
     {
         DeleteIPLogAction(guid, accountId, CHARACTER_DELETE);
     }
 
     // CHARACTER_FAILED_DELETE = 11
-    void OnPlayerFailedDelete(ObjectGuid guid, uint32 accountId) override
+    void OnFailedDelete(ObjectGuid guid, uint32 accountId) override
     {
         DeleteIPLogAction(guid, accountId, CHARACTER_FAILED_DELETE);
     }

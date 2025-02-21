@@ -268,7 +268,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
         }
     }
 
-    if (sScriptMgr->OnPlayerBeforeOpenItem(pUser, item))
+    if (sScriptMgr->OnBeforeOpenItem(pUser, item))
     {
         if (item->IsWrapped())// wrapped?
         {

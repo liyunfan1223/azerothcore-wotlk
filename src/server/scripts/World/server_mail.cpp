@@ -27,7 +27,7 @@ public:
     ServerMailReward() : PlayerScript("ServerMailReward", {PLAYERHOOK_ON_LOGIN}) { }
 
     // CHARACTER_LOGIN = 8
-    void OnPlayerLogin(Player* player) override
+    void OnLogin(Player* player) override
     {
         // Retrieve all server mail records and session only once
         auto const& serverMailStore = sObjectMgr->GetAllServerMailStore();
