@@ -93,7 +93,7 @@ void WorldSession::HandleAutostoreLootItemOpcode(WorldPacket& recvData)
         loot = &creature->loot;
     }
 
-    sScriptMgr->OnPlayerAfterCreatureLoot(player);
+    sScriptMgr->OnAfterCreatureLoot(player);
 
     InventoryResult msg;
     LootItem* lootItem = player->StoreLootItem(lootSlot, loot, msg);
@@ -179,7 +179,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
 
     if (loot)
     {
-        sScriptMgr->OnPlayerBeforeLootMoney(player, loot);
+        sScriptMgr->OnBeforeLootMoney(player, loot);
         loot->NotifyMoneyRemoved();
         if (shareMoney && player->GetGroup())      //item, pickpocket and players can be looted only single player
         {
@@ -211,7 +211,7 @@ void WorldSession::HandleLootMoneyOpcode(WorldPacket& /*recvData*/)
         }
         else
         {
-            sScriptMgr->OnPlayerAfterCreatureLootMoney(player);
+            sScriptMgr->OnAfterCreatureLootMoney(player);
             player->ModifyMoney(loot->gold);
             player->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_LOOT_MONEY, loot->gold);
 

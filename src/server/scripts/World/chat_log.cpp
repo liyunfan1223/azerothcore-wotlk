@@ -36,7 +36,7 @@ public:
     {
     }
 
-    void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg) override
+    void OnChat(Player* player, uint32 type, uint32 lang, std::string& msg) override
     {
         std::string logType = "";
         std::string chatType = "";
@@ -63,7 +63,7 @@ public:
             player->GetName(), chatType, lang, msg);
     }
 
-    void OnPlayerChat(Player* player, uint32 /*type*/, uint32 lang, std::string& msg, Player* receiver) override
+    void OnChat(Player* player, uint32 /*type*/, uint32 lang, std::string& msg, Player* receiver) override
     {
         //! NOTE:
         //! LANG_ADDON can only be sent by client in "PARTY", "RAID", "GUILD", "BATTLEGROUND", "WHISPER"
@@ -74,7 +74,7 @@ public:
                player->GetName(), msgType, receiver ? receiver->GetName() : "<unknown>", msg);
     }
 
-    void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group) override
+    void OnChat(Player* player, uint32 type, uint32 lang, std::string& msg, Group* group) override
     {
         //! NOTE:
         //! LANG_ADDON can only be sent by client in "PARTY", "RAID", "GUILD", "BATTLEGROUND", "WHISPER"
@@ -108,7 +108,7 @@ public:
             role, player->GetName(), action, msgType, targetGroup, msg);
     }
 
-    void OnPlayerChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild) override
+    void OnChat(Player* player, uint32 type, uint32 lang, std::string& msg, Guild* guild) override
     {
         //! NOTE:
         //! LANG_ADDON can only be sent by client in "PARTY", "RAID", "GUILD", "BATTLEGROUND", "WHISPER"
@@ -131,7 +131,7 @@ public:
             player->GetName(), msgType, guild ? guild->GetName() : "<unknown>", msg);
     }
 
-    void OnPlayerChat(Player* player, uint32 /*type*/, uint32 /*lang*/, std::string& msg, Channel* channel) override
+    void OnChat(Player* player, uint32 /*type*/, uint32 /*lang*/, std::string& msg, Channel* channel) override
     {
         bool isSystem = channel &&
                         (channel->HasFlag(CHANNEL_FLAG_TRADE) ||

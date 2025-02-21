@@ -126,7 +126,7 @@ void WorldSession::HandlePetitionBuyOpcode(WorldPacket& recvData)
         }
     }
 
-    sScriptMgr->OnPlayerPetitionBuy(_player, creature, charterid, cost, type);
+    sScriptMgr->PetitionBuy(_player, creature, charterid, cost, type);
 
     if (type == GUILD_CHARTER_TYPE)
     {
@@ -842,7 +842,7 @@ void WorldSession::SendPetitionShowList(ObjectGuid guid)
 
     if (creature->IsTabardDesigner())
     {
-        sScriptMgr->OnPlayerPetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
+        sScriptMgr->PetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
 
         data << uint8(1);                                   // count
         data << uint32(1);                                  // index
@@ -861,7 +861,7 @@ void WorldSession::SendPetitionShowList(ObjectGuid guid)
 
         // 2v2
         data << uint8(3);                                   // count
-        sScriptMgr->OnPlayerPetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
+        sScriptMgr->PetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
         data << uint32(1);                                  // index
         data << CharterEntry;                               // charter entry
         data << CharterDispayID;                            // charter display id
@@ -875,7 +875,7 @@ void WorldSession::SendPetitionShowList(ObjectGuid guid)
         CharterCost = sWorld->getIntConfig(CONFIG_CHARTER_COST_ARENA_3v3);
 
         // 3v3
-        sScriptMgr->OnPlayerPetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
+        sScriptMgr->PetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
         data << uint32(2);                                  // index
         data << CharterEntry;                               // charter entry
         data << CharterDispayID;                            // charter display id
@@ -889,7 +889,7 @@ void WorldSession::SendPetitionShowList(ObjectGuid guid)
         CharterCost = sWorld->getIntConfig(CONFIG_CHARTER_COST_ARENA_5v5);
 
         // 5v5
-        sScriptMgr->OnPlayerPetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
+        sScriptMgr->PetitionShowList(_player, creature, CharterEntry, CharterDispayID, CharterCost);
         data << uint32(3);                                  // index
         data << CharterEntry;                               // charter entry
         data << CharterDispayID;                            // charter display id

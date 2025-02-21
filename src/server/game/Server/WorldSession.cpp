@@ -615,7 +615,7 @@ void WorldSession::LogoutPlayer(bool save)
     if (_player)
     {
         //! Call script hook before other logout events
-        sScriptMgr->OnPlayerBeforeLogout(_player);
+        sScriptMgr->OnBeforePlayerLogout(_player);
 
         if (ObjectGuid lguid = _player->GetLootGUID())
             DoLootRelease(lguid);
@@ -670,11 +670,11 @@ void WorldSession::LogoutPlayer(bool save)
                         CharacterDatabase.Execute(stmt);
                     }
 
-                    sScriptMgr->OnPlayerBattlegroundDesertion(_player, BG_DESERTION_TYPE_INVITE_LOGOUT);
+                    sScriptMgr->OnBattlegroundDesertion(_player, BG_DESERTION_TYPE_INVITE_LOGOUT);
                 }
 
                 if (bgQueueTypeId >= BATTLEGROUND_QUEUE_2v2 && bgQueueTypeId < MAX_BATTLEGROUND_QUEUE_TYPES && _player->IsInvitedForBattlegroundQueueType(bgQueueTypeId))
-                    sScriptMgr->OnPlayerBattlegroundDesertion(_player, ARENA_DESERTION_TYPE_INVITE_LOGOUT);
+                    sScriptMgr->OnBattlegroundDesertion(_player, ARENA_DESERTION_TYPE_INVITE_LOGOUT);
 
                 _player->RemoveBattlegroundQueueId(bgQueueTypeId);
                 sBattlegroundMgr->GetBattlegroundQueue(bgQueueTypeId).RemovePlayer(_player->GetGUID(), true);

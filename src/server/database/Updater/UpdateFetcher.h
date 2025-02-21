@@ -72,7 +72,6 @@ private:
     {
         RELEASED,
         CUSTOM,
-        PENDING,
         MODULE,
         ARCHIVED
     };
@@ -93,8 +92,6 @@ private:
                 return RELEASED;
             else if (state == "CUSTOM")
                 return CUSTOM;
-            else if (state == "PENDING")
-                return PENDING;
             else if (state == "MODULE")
                 return MODULE;
 
@@ -109,8 +106,6 @@ private:
                     return "RELEASED";
                 case CUSTOM:
                     return "CUSTOM";
-                case PENDING:
-                    return "PENDING";
                 case MODULE:
                     return "MODULE";
                 case ARCHIVED:

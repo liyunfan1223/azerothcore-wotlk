@@ -417,7 +417,7 @@ void WorldSession::HandleAuctionPlaceBid(WorldPacket& recvData)
     AuctionEntry* auction = auctionHouse->GetAuction(auctionId);
     Player* player = GetPlayer();
 
-    if (!sScriptMgr->OnPlayerCanPlaceAuctionBid(player, auction))
+    if (!sScriptMgr->CanPlaceAuctionBid(player, auction))
     {
         SendAuctionCommandResult(0, AUCTION_PLACE_BID, ERR_AUCTION_RESTRICTED_ACCOUNT);
         return;

@@ -204,7 +204,7 @@ void TempSummon::InitStats(uint32 duration)
     Unit* owner = GetSummonerUnit();
     if (owner)
         if (Player* player = owner->ToPlayer())
-            sScriptMgr->OnPlayerBeforeTempSummonInitStats(player, this, duration);
+            sScriptMgr->OnBeforeTempSummonInitStats(player, this, duration);
 
     m_timer = duration;
     m_lifetime = duration;
