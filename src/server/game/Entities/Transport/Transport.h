@@ -19,7 +19,6 @@
 #define TRANSPORTS_H
 
 #include "GameObject.h"
-#include "Timer.h"
 #include "TransportMgr.h"
 #include "VehicleDefines.h"
 #include "ZoneScript.h"

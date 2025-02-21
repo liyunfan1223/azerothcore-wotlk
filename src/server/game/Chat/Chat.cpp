@@ -30,7 +30,6 @@
 #include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-#include "WorldSessionMgr.h"
 #include <boost/algorithm/string/replace.hpp>
 
 Player* ChatHandler::GetPlayer() const
@@ -82,7 +81,7 @@ bool ChatHandler::HasLowerSecurityAccount(WorldSession* target, uint32 target_ac
         return false;
 
     // ignore only for non-players for non strong checks (when allow apply command at least to same sec level)
-    if (!AccountMgr::IsPlayerAccount(m_session->GetSecurity()) && !strong && sWorld->getBoolConfig(CONFIG_GM_LOWER_SECURITY))
+    if (!AccountMgr::IsPlayerAccount(m_session->GetSecurity()) && !strong && !sWorld->getBoolConfig(CONFIG_GM_LOWER_SECURITY))
         return false;
 
     if (target)
@@ -189,7 +188,7 @@ void ChatHandler::SendGlobalSysMessage(const char* str)
     for (std::string_view line : Acore::Tokenize(str, '\n', true))
     {
         BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
-        sWorldSessionMgr->SendGlobalMessage(&data);
+        sWorld->SendGlobalMessage(&data);
     }
 }
 
@@ -199,7 +198,7 @@ void ChatHandler::SendGlobalGMSysMessage(const char* str)
     for (std::string_view line : Acore::Tokenize(str, '\n', true))
     {
         BuildChatPacket(data, CHAT_MSG_SYSTEM, LANG_UNIVERSAL, nullptr, nullptr, line);
-        sWorldSessionMgr->SendGlobalGMMessage(&data);
+        sWorld->SendGlobalGMMessage(&data);
     }
 }
 
@@ -515,8 +514,8 @@ bool ChatHandler::HasSession() const
 
 void ChatHandler::DoForAllValidSessions(std::function<void(Player*)> exec)
 {
-    WorldSessionMgr::SessionMap const& sessionMap = sWorldSessionMgr->GetAllSessions();
-    for (WorldSessionMgr::SessionMap::const_iterator itr = sessionMap.begin(); itr != sessionMap.end(); ++itr)
+    SessionMap::const_iterator itr;
+    for (itr = sWorld->GetAllSessions().begin(); itr != sWorld->GetAllSessions().end(); ++itr)
         if (Player* player = itr->second->GetPlayer())
             if (player->IsInWorld())
                 exec(player);

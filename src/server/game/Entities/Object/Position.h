@@ -64,11 +64,6 @@ struct Position
         return !(operator==(a));
     }
 
-    inline bool operator!=(Position const& a) const
-    {
-        return !(operator==(a));
-    }
-
     operator G3D::Vector3() const
     {
         return { m_positionX, m_positionY, m_positionZ };

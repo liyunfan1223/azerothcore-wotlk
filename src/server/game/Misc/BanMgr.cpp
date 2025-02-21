@@ -26,7 +26,6 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "WorldSession.h"
-#include "WorldSessionMgr.h"
 
 BanMgr* BanMgr::instance()
 {
@@ -70,11 +69,11 @@ BanReturn BanMgr::BanAccount(std::string const& AccountName, std::string const& 
     stmt->SetData(3, Reason);
     trans->Append(stmt);
 
-    if (WorldSession* session = sWorldSessionMgr->FindSession(AccountID))
+    if (WorldSession* session = sWorld->FindSession(AccountID))
         if (session->GetPlayerName() != Author)
             session->KickPlayer("Ban Account at condition 'FindSession(account)->GetPlayerName() != author'");
 
-    if (WorldSession* session = sWorldSessionMgr->FindOfflineSession(AccountID))
+    if (WorldSession* session = sWorld->FindOfflineSession(AccountID))
         if (session->GetPlayerName() != Author)
             session->KickPlayer("Ban Account at condition 'FindOfflineSession(account)->GetPlayerName() != author'");
 
@@ -132,11 +131,11 @@ BanReturn BanMgr::BanAccountByPlayerName(std::string const& CharacterName, std::
     stmt->SetData(3, Reason);
     trans->Append(stmt);
 
-    if (WorldSession* session = sWorldSessionMgr->FindSession(AccountID))
+    if (WorldSession* session = sWorld->FindSession(AccountID))
         if (session->GetPlayerName() != Author)
             session->KickPlayer("Ban Account at condition 'FindSession(account)->GetPlayerName() != author'");
 
-    if (WorldSession* session = sWorldSessionMgr->FindOfflineSession(AccountID))
+    if (WorldSession* session = sWorld->FindOfflineSession(AccountID))
         if (session->GetPlayerName() != Author)
             session->KickPlayer("Ban Account at condition 'FindOfflineSession(account)->GetPlayerName() != author'");
 
@@ -206,11 +205,11 @@ BanReturn BanMgr::BanIP(std::string const& IP, std::string const& Duration, std:
         Field* fields = resultAccounts->Fetch();
         uint32 AccountID = fields[0].Get<uint32>();
 
-        if (WorldSession* session = sWorldSessionMgr->FindSession(AccountID))
+        if (WorldSession* session = sWorld->FindSession(AccountID))
             if (session->GetPlayerName() != Author)
                 session->KickPlayer("Ban IP at condition 'FindSession(account)->GetPlayerName() != author'");
 
-        if (WorldSession* session = sWorldSessionMgr->FindOfflineSession(AccountID))
+        if (WorldSession* session = sWorld->FindOfflineSession(AccountID))
             if (session->GetPlayerName() != Author)
                 session->KickPlayer("Ban IP at condition 'FindOfflineSession(account)->GetPlayerName() != author'");
     } while (resultAccounts->NextRow());

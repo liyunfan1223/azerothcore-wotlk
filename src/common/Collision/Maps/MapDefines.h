@@ -22,7 +22,6 @@
 #include "DetourNavMesh.h"
 
 #define MAX_NUMBER_OF_GRIDS      64
-#define MAX_NUMBER_OF_CELLS      8
 #define SIZE_OF_GRIDS            533.3333f
 
 #define MMAP_MAGIC 0x4d4d4150   // 'MMAP'
@@ -43,11 +42,11 @@ struct MmapTileHeader
 // All padding fields must be handled and initialized to ensure mmaps_generator will produce binary-identical *.mmtile files
 static_assert(sizeof(MmapTileHeader) == 20, "MmapTileHeader size is not correct, adjust the padding field size");
 static_assert(sizeof(MmapTileHeader) == (sizeof(MmapTileHeader::mmapMagic) +
-    sizeof(MmapTileHeader::dtVersion) +
-    sizeof(MmapTileHeader::mmapVersion) +
-    sizeof(MmapTileHeader::size) +
-    sizeof(MmapTileHeader::usesLiquids) +
-    sizeof(MmapTileHeader::padding)), "MmapTileHeader has uninitialized padding fields");
+              sizeof(MmapTileHeader::dtVersion) +
+              sizeof(MmapTileHeader::mmapVersion) +
+              sizeof(MmapTileHeader::size) +
+              sizeof(MmapTileHeader::usesLiquids) +
+              sizeof(MmapTileHeader::padding)), "MmapTileHeader has uninitialized padding fields");
 
 enum NavTerrain
 {

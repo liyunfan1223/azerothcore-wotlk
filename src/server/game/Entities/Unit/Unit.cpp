@@ -20566,8 +20566,6 @@ void Unit::ExecuteDelayedUnitRelocationEvent()
             }
         }
 
-        GetMap()->LoadGridsInRange(*player, MAX_VISIBILITY_DISTANCE);
-
         Acore::PlayerRelocationNotifier relocateNoLarge(*player, false); // visit only objects which are not large; default distance
         Cell::VisitAllObjects(viewPoint, relocateNoLarge, player->GetSightRange() + VISIBILITY_INC_FOR_GOBJECTS);
         relocateNoLarge.SendToSelf();

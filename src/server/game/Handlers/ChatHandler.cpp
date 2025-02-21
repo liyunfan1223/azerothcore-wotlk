@@ -788,10 +788,16 @@ void WorldSession::HandleTextEmoteOpcode(WorldPacket& recvData)
 
     Unit* unit = ObjectAccessor::GetUnit(*_player, guid);
 
+    CellCoord p = Acore::ComputeCellCoord(GetPlayer()->GetPositionX(), GetPlayer()->GetPositionY());
+
+    Cell cell(p);
+    cell.SetNoCreate();
+
     Acore::EmoteChatBuilder emote_builder(*GetPlayer(), text_emote, emoteNum, unit);
     Acore::LocalizedPacketDo<Acore::EmoteChatBuilder > emote_do(emote_builder);
     Acore::PlayerDistWorker<Acore::LocalizedPacketDo<Acore::EmoteChatBuilder > > emote_worker(GetPlayer(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE), emote_do);
-    Cell::VisitWorldObjects(GetPlayer(), emote_worker, sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE));
+    TypeContainerVisitor<Acore::PlayerDistWorker<Acore::LocalizedPacketDo<Acore::EmoteChatBuilder> >, WorldTypeMapContainer> message(emote_worker);
+    cell.Visit(p, message, *GetPlayer()->GetMap(), *GetPlayer(), sWorld->getFloatConfig(CONFIG_LISTEN_RANGE_TEXTEMOTE));
 
     GetPlayer()->UpdateAchievementCriteria(ACHIEVEMENT_CRITERIA_TYPE_DO_EMOTE, text_emote, 0, unit);
 

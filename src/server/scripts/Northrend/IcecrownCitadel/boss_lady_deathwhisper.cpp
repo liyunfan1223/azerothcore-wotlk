@@ -1021,25 +1021,18 @@ public:
         void JustDied(Unit* killer) override
         {
             events.Reset();
-
-            if (!killer)
-                return;
-
-            Player* owner = killer->GetCharmerOrOwnerPlayerOrPlayerItself();
-            if (!owner)
-                return;
-
-            Group* group = owner->GetGroup();
-            if (!group)
+            if (Player* owner = killer->GetCharmerOrOwnerPlayerOrPlayerItself())
             {
-                owner->FailQuest(QUEST_DEPROGRAMMING);
-                return;
+                if (Group* group = owner->GetGroup())
+                {
+                    for (GroupReference* itr = group->GetFirstMember(); itr != nullptr; itr = itr->next())
+                        if (Player* member = itr->GetSource())
+                            if (member->IsInMap(owner))
+                                member->FailQuest(QUEST_DEPROGRAMMING);
+                }
+                else
+                    owner->FailQuest(QUEST_DEPROGRAMMING);
             }
-
-            for (GroupReference* itr = group->GetFirstMember(); itr != nullptr; itr = itr->next())
-                if (Player* member = itr->GetSource())
-                    if (member->IsInMap(owner))
-                        member->FailQuest(QUEST_DEPROGRAMMING);
         }
 
         void MovementInform(uint32 type, uint32 id) override

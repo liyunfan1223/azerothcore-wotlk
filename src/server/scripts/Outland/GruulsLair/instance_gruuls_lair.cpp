@@ -38,8 +38,7 @@ MinionData const minionData[] =
     { NPC_KROSH_FIREHAND,       DATA_MAULGAR },
     { NPC_OLM_THE_SUMMONER,     DATA_MAULGAR },
     { NPC_KIGGLER_THE_CRAZED,   DATA_MAULGAR },
-    { NPC_BLINDEYE_THE_SEER,    DATA_MAULGAR },
-    { 0, 0 } // END
+    { NPC_BLINDEYE_THE_SEER,    DATA_MAULGAR }
 };
 
 class instance_gruuls_lair : public InstanceMapScript

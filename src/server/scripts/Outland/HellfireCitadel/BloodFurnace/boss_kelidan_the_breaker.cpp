@@ -125,6 +125,7 @@ struct boss_kelidan_the_breaker : public BossAI
     {
         Talk(SAY_DIE);
         _JustDied();
+        me->GetMap()->LoadGrid(0, -111.0f);
     }
 
     void ApplyImmunities(bool apply)

@@ -1151,12 +1151,12 @@ public:
         return nullptr;
     }
 
-    CellObjectGuids const& GetGridObjectGuids(uint16 mapid, uint8 spawnMode, uint32 gridId)
+    CellObjectGuids const& GetCellObjectGuids(uint16 mapid, uint8 spawnMode, uint32 cell_id)
     {
         MapObjectGuids::const_iterator itr1 = _mapObjectGuidsStore.find(MAKE_PAIR32(mapid, spawnMode));
         if (itr1 != _mapObjectGuidsStore.end())
         {
-            CellObjectGuidsMap::const_iterator itr2 = itr1->second.find(gridId);
+            CellObjectGuidsMap::const_iterator itr2 = itr1->second.find(cell_id);
             if (itr2 != itr1->second.end())
                 return itr2->second;
         }

@@ -110,12 +110,11 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
     if (!_player->CanExecutePendingSpellCastRequest(spellInfo))
         if (_player->CanRequestSpellCast(spellInfo))
         {
-            WorldPacket packetCopy(recvPacket); // Copy the packet
-            packetCopy.rpos(0); // Reset read position to the start of the buffer.
+            recvPacket.rpos(0); // Reset read position to the start of the buffer.
             _player->SpellQueue.emplace_back(
                 spellId,
                 spellInfo->GetCategory(),
-                std::move(packetCopy), // Move ownership of copied packet
+                std::move(recvPacket), // Move ownership of recvPacket
                 true // itemCast
             );
             return;
@@ -425,12 +424,11 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     {
         if (_player->CanRequestSpellCast(spellInfo))
         {
-            WorldPacket packetCopy(recvPacket); // Copy the packet
-            packetCopy.rpos(0); // Reset read position to the start of the buffer.
+            recvPacket.rpos(0); // Reset read position to the start of the buffer.
             _player->SpellQueue.emplace_back(
                 spellId,
                 spellInfo->GetCategory(),
-                std::move(packetCopy) // Move ownership of copied packet
+                std::move(recvPacket) // Move ownership of recvPacket
             );
             return;
         }
