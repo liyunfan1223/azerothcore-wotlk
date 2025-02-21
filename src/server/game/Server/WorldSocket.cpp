@@ -30,7 +30,6 @@
 #include "ScriptMgr.h"
 #include "World.h"
 #include "WorldSession.h"
-#include "WorldSessionMgr.h"
 #include "zlib.h"
 #include <memory>
 
@@ -714,7 +713,7 @@ void WorldSocket::HandleAuthSessionCallback(std::shared_ptr<AuthSession> authSes
         _worldSession->InitWarden(account.SessionKey, account.OS);
     }
 
-    sWorldSessionMgr->AddSession(_worldSession);
+    sWorld->AddSession(_worldSession);
 
     AsyncRead();
 }

@@ -32,8 +32,7 @@ DoorData const doorData[] =
 
 MinionData const minionData[] =
 {
-    { NPC_HELLFIRE_CHANNELER,   DATA_MAGTHERIDON },
-    { 0, 0 } // END
+    { NPC_HELLFIRE_CHANNELER,   DATA_MAGTHERIDON }
 };
 
 class instance_magtheridons_lair : public InstanceMapScript

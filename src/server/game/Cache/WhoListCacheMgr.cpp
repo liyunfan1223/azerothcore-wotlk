@@ -19,7 +19,6 @@
 #include "GuildMgr.h"
 #include "ObjectAccessor.h"
 #include "World.h"
-#include "WorldSessionMgr.h"
 
 WhoListCacheMgr* WhoListCacheMgr::instance()
 {
@@ -31,7 +30,7 @@ void WhoListCacheMgr::Update()
 {
     // clear current list
     _whoListStorage.clear();
-    _whoListStorage.reserve(sWorldSessionMgr->GetPlayerCount() + 1);
+    _whoListStorage.reserve(sWorld->GetPlayerCount() + 1);
 
     for (auto const& [guid, player] : ObjectAccessor::GetPlayers())
     {

@@ -25,7 +25,6 @@
 #include "GameGraveyard.h"
 #include "GameTime.h"
 #include "GridNotifiers.h"
-#include "GridTerrainLoader.h"
 #include "Group.h"
 #include "GuildMgr.h"
 #include "IPLocation.h"
@@ -46,7 +45,6 @@
 #include "TargetedMovementGenerator.h"
 #include "Tokenize.h"
 #include "WeatherMgr.h"
-#include "WorldSessionMgr.h"
 
 /// @todo: this import is not necessary for compilation and marked as unused by the IDE
 //  however, for some reasons removing it would cause a damn linking issue
@@ -590,8 +588,8 @@ public:
         int gridX = 63 - gridCoord.x_coord;
         int gridY = 63 - gridCoord.y_coord;
 
-        uint32 haveMap = GridTerrainLoader::ExistMap(object->GetMapId(), gridX, gridY) ? 1 : 0;
-        uint32 haveVMap = GridTerrainLoader::ExistVMap(object->GetMapId(), gridX, gridY) ? 1 : 0;
+        uint32 haveMap = Map::ExistMap(object->GetMapId(), gridX, gridY) ? 1 : 0;
+        uint32 haveVMap = Map::ExistVMap(object->GetMapId(), gridX, gridY) ? 1 : 0;
         uint32 haveMMAP = MMAP::MMapFactory::createOrGetMMapMgr()->GetNavMesh(handler->GetSession()->GetPlayer()->GetMapId()) ? 1 : 0;
 
         if (haveVMap)
@@ -2405,6 +2403,10 @@ public:
     {
         Player* player = handler->GetSession()->GetPlayer();
 
+        CellCoord p(Acore::ComputeCellCoord(player->GetPositionX(), player->GetPositionY()));
+        Cell cell(p);
+        cell.SetNoCreate();
+
         Acore::RespawnDo u_do;
         Acore::WorldObjectWorker<Acore::RespawnDo> worker(player, u_do);
         Cell::VisitGridObjects(player, worker, player->GetGridActivationRange());
@@ -2449,7 +2451,7 @@ public:
 
         // find only player from same account if any
         if (!target)
-            if (WorldSession* session = sWorldSessionMgr->FindSession(accountId))
+            if (WorldSession* session = sWorld->FindSession(accountId))
             {
                 target = session->GetPlayer();
             }
@@ -2555,7 +2557,7 @@ public:
         // find only player from same account if any
         if (!playerTarget)
         {
-            if (WorldSession* session = sWorldSessionMgr->FindSession(accountId))
+            if (WorldSession* session = sWorld->FindSession(accountId))
             {
                 playerTarget = session->GetPlayer();
             }
@@ -2944,7 +2946,7 @@ public:
             return false;
         }
 
-        sWorldSessionMgr->SendGlobalMessage(WorldPackets::Misc::Playsound(soundId).Write());
+        sWorld->SendGlobalMessage(WorldPackets::Misc::Playsound(soundId).Write());
 
         handler->PSendSysMessage(LANG_COMMAND_PLAYED_TO_ALL, soundId);
         return true;

@@ -227,6 +227,10 @@ public:
     {
         if (InstanceScript* instance = player->GetInstanceScript())
         {
+            // Instance map's enormous, Hakkar's GRID is not loaded by the time players enter.
+            // Without this, the creature never says anything, because it doesn't load in time.
+            player->GetMap()->LoadGrid(-11783.99f, -1655.27f);
+
             if (Creature* hakkar = ObjectAccessor::GetCreature(*player, instance->GetGuidData(DATA_HAKKAR)))
             {
                 hakkar->setActive(true);
@@ -250,6 +254,10 @@ public:
     {
         if (InstanceScript* instance = player->GetInstanceScript())
         {
+            // Instance map's enormous, Hakkar's GRID is not loaded by the time players enter.
+           // Without this, the creature never says anything, because it doesn't load in time.
+            player->GetMap()->LoadGrid(-11783.99f, -1655.27f);
+
             if (Creature* hakkar = ObjectAccessor::GetCreature(*player, instance->GetGuidData(DATA_HAKKAR)))
             {
                 if (hakkar->GetAI())
@@ -272,6 +280,10 @@ public:
     {
         if (InstanceScript* instance = player->GetInstanceScript())
         {
+            // Instance map's enormous, Hakkar's GRID is not loaded by the time players enter.
+           // Without this, the creature never says anything, because it doesn't load in time.
+            player->GetMap()->LoadGrid(-11783.99f, -1655.27f);
+
             if (Creature* hakkar = ObjectAccessor::GetCreature(*player, instance->GetGuidData(DATA_HAKKAR)))
             {
                 if (hakkar->GetAI())
@@ -294,6 +306,10 @@ public:
     {
         if (InstanceScript* instance = player->GetInstanceScript())
         {
+            // Instance map's enormous, Hakkar's GRID is not loaded by the time players enter.
+           // Without this, the creature never says anything, because it doesn't load in time.
+            player->GetMap()->LoadGrid(-11783.99f, -1655.27f);
+
             if (Creature* hakkar = ObjectAccessor::GetCreature(*player, instance->GetGuidData(DATA_HAKKAR)))
             {
                 if (hakkar->GetAI())
@@ -316,6 +332,10 @@ public:
     {
         if (InstanceScript* instance = player->GetInstanceScript())
         {
+            // Instance map's enormous, Hakkar's GRID is not loaded by the time players enter.
+           // Without this, the creature never says anything, because it doesn't load in time.
+            player->GetMap()->LoadGrid(-11783.99f, -1655.27f);
+
             if (Creature* hakkar = ObjectAccessor::GetCreature(*player, instance->GetGuidData(DATA_HAKKAR)))
             {
                 if (hakkar->GetAI())

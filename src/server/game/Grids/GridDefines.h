@@ -20,8 +20,7 @@
 
 #include "Common.h"
 #include "MapDefines.h"
-#include "GridCell.h"
-#include "MapGrid.h"
+#include "NGrid.h"
 
 // Forward class definitions
 class Corpse;
@@ -31,6 +30,8 @@ class GameObject;
 class Pet;
 class Player;
 class ObjectGuid;
+
+#define MAX_NUMBER_OF_CELLS     8
 
 #define CENTER_GRID_ID          (MAX_NUMBER_OF_GRIDS/2)
 
@@ -72,8 +73,8 @@ enum GridMapTypeMask
     GRID_MAP_TYPE_MASK_ALL              = 0x1F
 };
 
-typedef GridCell<AllWorldObjectTypes, AllGridObjectTypes> GridCellType;
-typedef MapGrid<AllWorldObjectTypes, AllGridObjectTypes> MapGridType;
+typedef Grid<Player, AllWorldObjectTypes, AllGridObjectTypes> GridType;
+typedef NGrid<MAX_NUMBER_OF_CELLS, Player, AllWorldObjectTypes, AllGridObjectTypes> NGridType;
 
 typedef TypeMapContainer<AllGridObjectTypes> GridTypeMapContainer;
 typedef TypeMapContainer<AllWorldObjectTypes> WorldTypeMapContainer;
@@ -184,13 +185,6 @@ namespace Acore
     inline GridCoord ComputeGridCoord(float x, float y)
     {
         return Compute<GridCoord, CENTER_GRID_ID>(x, y, CENTER_GRID_OFFSET, SIZE_OF_GRIDS);
-    }
-
-    inline GridCoord ComputeGridCoordSimple(float x, float y)
-    {
-        int gx = (int)(CENTER_GRID_ID - x / SIZE_OF_GRIDS);
-        int gy = (int)(CENTER_GRID_ID - y / SIZE_OF_GRIDS);
-        return GridCoord((MAX_NUMBER_OF_GRIDS - 1) - gx, (MAX_NUMBER_OF_GRIDS - 1) - gy);
     }
 
     inline CellCoord ComputeCellCoord(float x, float y)

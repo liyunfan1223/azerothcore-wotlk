@@ -25,7 +25,6 @@
 #include "ScriptMgr.h"
 #include "Util.h"
 #include "World.h"
-#include "WorldSessionMgr.h"
 
 /// Create the Weather object
 Weather::Weather(uint32 zone, WeatherData const* weatherChances)
@@ -204,7 +203,7 @@ bool Weather::UpdateWeather()
     WorldPackets::Misc::Weather weather(state, m_grade);
 
     //- Returns false if there were no players found to update
-    if (!sWorldSessionMgr->SendZoneMessage(m_zone, weather.Write()))
+    if (!sWorld->SendZoneMessage(m_zone, weather.Write()))
         return false;
 
     ///- Log the event

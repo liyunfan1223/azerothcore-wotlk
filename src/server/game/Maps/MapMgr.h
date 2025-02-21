@@ -24,7 +24,6 @@
 #include "MapInstanced.h"
 #include "MapUpdater.h"
 #include "Object.h"
-#include "Timer.h"
 
 class Transport;
 class StaticTransport;

@@ -28,7 +28,6 @@
 #include "firework_show_Undercity.h"
 #include "GameObjectAI.h"
 #include "GameObjectScript.h"
-#include "Timer.h"
 
 // <mapId, zoneId>, show
 std::map<std::pair<uint32, uint32>, FireworkShow const *> const FireworkShowStore = {
