@@ -2385,7 +2385,7 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode, std::strin
     _exitCode = exitcode;
     _shutdownReason = reason;
 
-    auto const& playersOnline = GetActiveSessionCount();
+    auto const& playersOnline = sWorldSessionMgr->GetActiveSessionCount();
 
     if (time < 5 && playersOnline)
     {
