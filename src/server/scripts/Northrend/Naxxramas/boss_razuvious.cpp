@@ -15,55 +15,64 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boss_razuvious.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
 #include "SpellInfo.h"
 
+enum Says
+{
+    SAY_AGGRO = 0,
+    SAY_SLAY = 1,
+    SAY_TAUNTED = 2,
+    SAY_DEATH = 3,
+    SAY_PATHETIC = 4,
+    SAY_TARGET_DUMMY = 5,
+    SAY_DEATH_KNIGHT_UNDERSTUDY = 0,
+};
 
 enum Spells
 {
-    SPELL_UNBALANCING_STRIKE        = 26613,
-    SPELL_DISRUPTING_SHOUT_10       = 55543,
-    SPELL_DISRUPTING_SHOUT_25       = 29107,
-    SPELL_JAGGED_KNIFE              = 55550,
-    SPELL_HOPELESS                  = 29125,
-    SPELL_TAUNT                     = 29060
+    SPELL_UNBALANCING_STRIKE = 26613,
+    SPELL_DISRUPTING_SHOUT_10 = 55543,
+    SPELL_DISRUPTING_SHOUT_25 = 29107,
+    SPELL_JAGGED_KNIFE = 55550,
+    SPELL_HOPELESS = 29125,
+    SPELL_TAUNT = 29060
 };
 
 enum Events
 {
-    EVENT_UNBALANCING_STRIKE        = 1,
-    EVENT_DISRUPTING_SHOUT          = 2,
-    EVENT_JAGGED_KNIFE              = 3
+    EVENT_UNBALANCING_STRIKE = 1,
+    EVENT_DISRUPTING_SHOUT = 2,
+    EVENT_JAGGED_KNIFE = 3
 };
 
 enum NPCs
 {
-    NPC_DEATH_KNIGHT_UNDERSTUDY     = 16803,
-    NPC_TARGET_DUMMY                = 16211,
+    NPC_DEATH_KNIGHT_UNDERSTUDY = 16803,
+    NPC_TARGET_DUMMY = 16211,
 };
 
 enum Actions
 {
-    ACTION_FACE_ME                 = 0,
-    ACTION_TALK                    = 1,
-    ACTION_EMOTE                   = 2,
-    ACTION_SALUTE                  = 3,
-    ACTION_BACK_TO_TRAINING        = 4,
+    ACTION_FACE_ME = 0,
+    ACTION_TALK = 1,
+    ACTION_EMOTE = 2,
+    ACTION_SALUTE = 3,
+    ACTION_BACK_TO_TRAINING = 4,
 };
 
 enum Misc
 {
-    GROUP_OOC_RP                    = 0,
-    POINT_DEATH_KNIGHT              = 0,
+    GROUP_OOC_RP = 0,
+    POINT_DEATH_KNIGHT = 0,
 };
 
 class boss_razuvious : public CreatureScript
 {
 public:
-    boss_razuvious() : CreatureScript("boss_razuvious") { }
+    boss_razuvious() : CreatureScript("boss_razuvious") {}
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
@@ -73,7 +82,8 @@ public:
     struct boss_razuviousAI : public BossAI
     {
         explicit boss_razuviousAI(Creature* c) : BossAI(c, BOSS_RAZUVIOUS), summons(me)
-        {}
+        {
+        }
 
         EventMap events;
         SummonList summons;
@@ -110,55 +120,55 @@ public:
                     me->SetFacingToObject(understudy);
 
             scheduler.Schedule(2s, GROUP_OOC_RP, [this](TaskContext /*context*/)
-            {
-                if (roll_chance_i(75))
                 {
-                    bool longText = roll_chance_i(50);
-                    Talk(longText ? SAY_TARGET_DUMMY : SAY_PATHETIC);
-                    scheduler.Schedule(4s, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                    if (roll_chance_i(75))
                     {
-                        if (_rpBuddyGUID)
-                            if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
-                                understudy->AI()->DoAction(ACTION_TALK);
-                    });
-                    if (longText)
-                        scheduler.DelayGroup(GROUP_OOC_RP, 5s);
-                }
-                else
-                {
-                    me->HandleEmoteCommand(EMOTE_ONESHOT_EXCLAMATION);
-                    scheduler.Schedule(4s, GROUP_OOC_RP, [this](TaskContext /*context*/)
-                    {
-                        if (_rpBuddyGUID)
-                            if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                        bool longText = roll_chance_i(50);
+                        Talk(longText ? SAY_TARGET_DUMMY : SAY_PATHETIC);
+                        scheduler.Schedule(4s, GROUP_OOC_RP, [this](TaskContext /*context*/)
                             {
-                                if (roll_chance_i(25))
-                                    understudy->AI()->DoAction(ACTION_EMOTE);
-                                else
-                                    understudy->AI()->DoAction(ACTION_TALK);
-                            }
-                    });
-                }
-            }).Schedule(4s, GROUP_OOC_RP, [this](TaskContext /*context*/)
-            {
-                if (_rpBuddyGUID)
-                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
-                        understudy->AI()->DoAction(ACTION_FACE_ME);
-            }).Schedule(10s, GROUP_OOC_RP, [this](TaskContext /*context*/)
-            {
-                if (_rpBuddyGUID)
-                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
-                        understudy->AI()->DoAction(ACTION_SALUTE);
-            }).Schedule(13s, GROUP_OOC_RP, [this](TaskContext /*context*/)
-            {
-                me->ResumeMovement();
-            }).Schedule(16s, GROUP_OOC_RP, [this](TaskContext /*context*/)
-            {
-                if (_rpBuddyGUID)
-                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
-                        understudy->AI()->DoAction(ACTION_BACK_TO_TRAINING);
-                ScheduleRP();
-            });
+                                if (_rpBuddyGUID)
+                                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                                        understudy->AI()->DoAction(ACTION_TALK);
+                            });
+                        if (longText)
+                            scheduler.DelayGroup(GROUP_OOC_RP, 5s);
+                    }
+                    else
+                    {
+                        me->HandleEmoteCommand(EMOTE_ONESHOT_EXCLAMATION);
+                        scheduler.Schedule(4s, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                            {
+                                if (_rpBuddyGUID)
+                                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                                    {
+                                        if (roll_chance_i(25))
+                                            understudy->AI()->DoAction(ACTION_EMOTE);
+                                        else
+                                            understudy->AI()->DoAction(ACTION_TALK);
+                                    }
+                            });
+                    }
+                }).Schedule(4s, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                    {
+                        if (_rpBuddyGUID)
+                            if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                                understudy->AI()->DoAction(ACTION_FACE_ME);
+                    }).Schedule(10s, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                        {
+                            if (_rpBuddyGUID)
+                                if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                                    understudy->AI()->DoAction(ACTION_SALUTE);
+                        }).Schedule(13s, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                            {
+                                me->ResumeMovement();
+                            }).Schedule(16s, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                                {
+                                    if (_rpBuddyGUID)
+                                        if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                                            understudy->AI()->DoAction(ACTION_BACK_TO_TRAINING);
+                                    ScheduleRP();
+                                });
         }
 
         void MovementInform(uint32 type, uint32 id) override
@@ -173,26 +183,26 @@ public:
         {
             _rpBuddyGUID = Acore::Containers::SelectRandomContainerElement(summons);
             scheduler.Schedule(60s, 80s, GROUP_OOC_RP, [this](TaskContext context)
-            {
-                if (_rpBuddyGUID)
                 {
-                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                    if (_rpBuddyGUID)
                     {
-                        if (me->GetDistance2d(understudy) <= 6.0f)
+                        if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
                         {
-                            me->PauseMovement();
-                            scheduler.Schedule(500ms, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                            if (me->GetDistance2d(understudy) <= 6.0f)
                             {
-                                if (_rpBuddyGUID)
-                                    if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
-                                        me->GetMotionMaster()->MovePoint(POINT_DEATH_KNIGHT, understudy->GetNearPosition(3.2f, understudy->GetRelativeAngle(me)));
-                            });
-                            return;
+                                me->PauseMovement();
+                                scheduler.Schedule(500ms, GROUP_OOC_RP, [this](TaskContext /*context*/)
+                                    {
+                                        if (_rpBuddyGUID)
+                                            if (Creature* understudy = ObjectAccessor::GetCreature(*me, _rpBuddyGUID))
+                                                me->GetMotionMaster()->MovePoint(POINT_DEATH_KNIGHT, understudy->GetNearPosition(3.2f, understudy->GetRelativeAngle(me)));
+                                    });
+                                return;
+                            }
                         }
                     }
-                }
-                context.Repeat(2s);
-            });
+                    context.Repeat(2s);
+                });
         }
 
         void KilledUnit(Unit* who) override
@@ -213,7 +223,7 @@ public:
             }
         }
 
-        void JustDied(Unit*  killer) override
+        void JustDied(Unit* killer) override
         {
             BossAI::JustDied(killer);
             Talk(SAY_DEATH);
@@ -253,21 +263,21 @@ public:
 
             switch (events.ExecuteEvent())
             {
-                case EVENT_UNBALANCING_STRIKE:
-                    me->CastSpell(me->GetVictim(), SPELL_UNBALANCING_STRIKE, false);
-                    events.Repeat(20s);
-                    break;
-                case EVENT_DISRUPTING_SHOUT:
-                    me->CastSpell(me, RAID_MODE(SPELL_DISRUPTING_SHOUT_10, SPELL_DISRUPTING_SHOUT_25), false);
-                    events.Repeat(15s);
-                    break;
-                case EVENT_JAGGED_KNIFE:
-                    if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 45.0f))
-                    {
-                        me->CastSpell(target, SPELL_JAGGED_KNIFE, false);
-                    }
-                    events.Repeat(10s);
-                    break;
+            case EVENT_UNBALANCING_STRIKE:
+                me->CastSpell(me->GetVictim(), SPELL_UNBALANCING_STRIKE, false);
+                events.Repeat(20s);
+                break;
+            case EVENT_DISRUPTING_SHOUT:
+                me->CastSpell(me, RAID_MODE(SPELL_DISRUPTING_SHOUT_10, SPELL_DISRUPTING_SHOUT_25), false);
+                events.Repeat(15s);
+                break;
+            case EVENT_JAGGED_KNIFE:
+                if (Unit* target = SelectTarget(SelectTargetMethod::Random, 0, 45.0f))
+                {
+                    me->CastSpell(target, SPELL_JAGGED_KNIFE, false);
+                }
+                events.Repeat(10s);
+                break;
             }
             DoMeleeAttackIfReady();
         }
@@ -280,7 +290,7 @@ public:
 class boss_razuvious_minion : public CreatureScript
 {
 public:
-    boss_razuvious_minion() : CreatureScript("boss_razuvious_minion") { }
+    boss_razuvious_minion() : CreatureScript("boss_razuvious_minion") {}
 
     CreatureAI* GetAI(Creature* creature) const override
     {
@@ -289,7 +299,7 @@ public:
 
     struct boss_razuvious_minionAI : public ScriptedAI
     {
-        explicit boss_razuvious_minionAI(Creature* creature) : ScriptedAI(creature) { }
+        explicit boss_razuvious_minionAI(Creature* creature) : ScriptedAI(creature) {}
 
         void Reset() override
         {
@@ -305,40 +315,40 @@ public:
                 me->SetFacingToObject(targetDummy);
             }
             scheduler.Schedule(6s, 9s, GROUP_OOC_RP, [this](TaskContext context)
-            {
-                me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACK1H);
-                context.Repeat(6s, 9s);
-            });
+                {
+                    me->HandleEmoteCommand(EMOTE_ONESHOT_ATTACK1H);
+                    context.Repeat(6s, 9s);
+                });
         }
 
         void DoAction(int32 action) override
         {
             switch (action)
             {
-                case ACTION_FACE_ME:
-                {
-                    scheduler.CancelGroup(GROUP_OOC_RP);
-                    me->SetSheath(SHEATH_STATE_UNARMED);
-                    me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
+            case ACTION_FACE_ME:
+            {
+                scheduler.CancelGroup(GROUP_OOC_RP);
+                me->SetSheath(SHEATH_STATE_UNARMED);
+                me->SetUInt32Value(UNIT_NPC_EMOTESTATE, EMOTE_STATE_NONE);
 
-                    if (Creature* creature = me->GetInstanceScript()->GetCreature(DATA_RAZUVIOUS_BOSS))
-                        me->SetFacingToObject(creature);
+                if (Creature* creature = me->GetInstanceScript()->GetCreature(DATA_RAZUVIOUS_BOSS))
+                    me->SetFacingToObject(creature);
 
-                    break;
-                }
-                case ACTION_TALK:
-                    Talk(SAY_DEATH_KNIGHT_UNDERSTUDY);
-                    break;
-                case ACTION_EMOTE:
-                    me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
-                    break;
-                case ACTION_SALUTE:
-                    me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
-                    break;
-                case ACTION_BACK_TO_TRAINING:
-                    me->SetSheath(SHEATH_STATE_MELEE);
-                    ScheduleAttackDummy();
-                    break;
+                break;
+            }
+            case ACTION_TALK:
+                Talk(SAY_DEATH_KNIGHT_UNDERSTUDY);
+                break;
+            case ACTION_EMOTE:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_TALK);
+                break;
+            case ACTION_SALUTE:
+                me->HandleEmoteCommand(EMOTE_ONESHOT_SALUTE);
+                break;
+            case ACTION_BACK_TO_TRAINING:
+                me->SetSheath(SHEATH_STATE_MELEE);
+                ScheduleAttackDummy();
+                break;
             }
         }
 

@@ -1,3 +1,4 @@
+
 /*
  * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
  *
@@ -15,44 +16,43 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boss_loatheb.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
 
 enum Spells
 {
-    SPELL_NECROTIC_AURA                         = 55593,
-    SPELL_SUMMON_SPORE                          = 29234,
-    SPELL_DEATHBLOOM_10                         = 29865,
-    SPELL_DEATHBLOOM_25                         = 55053,
-    SPELL_INEVITABLE_DOOM_10                    = 29204,
-    SPELL_INEVITABLE_DOOM_25                    = 55052,
-    SPELL_BERSERK                               = 26662
+    SPELL_NECROTIC_AURA = 55593,
+    SPELL_SUMMON_SPORE = 29234,
+    SPELL_DEATHBLOOM_10 = 29865,
+    SPELL_DEATHBLOOM_25 = 55053,
+    SPELL_INEVITABLE_DOOM_10 = 29204,
+    SPELL_INEVITABLE_DOOM_25 = 55052,
+    SPELL_BERSERK = 26662
 };
 
 enum Events
 {
-    EVENT_NECROTIC_AURA                         = 1,
-    EVENT_DEATHBLOOM                            = 2,
-    EVENT_INEVITABLE_DOOM                       = 3,
-    EVENT_BERSERK                               = 4,
-    EVENT_SUMMON_SPORE                          = 5,
-    EVENT_NECROTIC_AURA_FADING                  = 6,
-    EVENT_NECROTIC_AURA_REMOVED                 = 7
+    EVENT_NECROTIC_AURA = 1,
+    EVENT_DEATHBLOOM = 2,
+    EVENT_INEVITABLE_DOOM = 3,
+    EVENT_BERSERK = 4,
+    EVENT_SUMMON_SPORE = 5,
+    EVENT_NECROTIC_AURA_FADING = 6,
+    EVENT_NECROTIC_AURA_REMOVED = 7
 };
 
 enum Texts
 {
-    SAY_NECROTIC_AURA_APPLIED                   = 0,
-    SAY_NECROTIC_AURA_REMOVED                   = 1,
-    SAY_NECROTIC_AURA_FADING                    = 2
+    SAY_NECROTIC_AURA_APPLIED = 0,
+    SAY_NECROTIC_AURA_REMOVED = 1,
+    SAY_NECROTIC_AURA_FADING = 2
 };
 
 class boss_loatheb : public CreatureScript
 {
 public:
-    boss_loatheb() : CreatureScript("boss_loatheb") { }
+    boss_loatheb() : CreatureScript("boss_loatheb") {}
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
@@ -123,35 +123,35 @@ public:
 
             switch (events.ExecuteEvent())
             {
-                case EVENT_SUMMON_SPORE:
-                    me->CastSpell(me, SPELL_SUMMON_SPORE, true);
-                    events.Repeat(35s);
-                    break;
-                case EVENT_NECROTIC_AURA:
-                    me->CastSpell(me, SPELL_NECROTIC_AURA, true);
-                    Talk(SAY_NECROTIC_AURA_APPLIED);
-                    events.ScheduleEvent(EVENT_NECROTIC_AURA_FADING, 14s);
-                    events.ScheduleEvent(EVENT_NECROTIC_AURA_REMOVED, 17s);
-                    events.Repeat(20s);
-                    break;
-                case EVENT_DEATHBLOOM:
-                    me->CastSpell(me, RAID_MODE(SPELL_DEATHBLOOM_10, SPELL_DEATHBLOOM_25), false);
-                    events.Repeat(30s);
-                    break;
-                case EVENT_INEVITABLE_DOOM:
-                    me->CastSpell(me, RAID_MODE(SPELL_INEVITABLE_DOOM_10, SPELL_INEVITABLE_DOOM_25), false);
-                    doomCounter++;
-                    events.Repeat(doomCounter < 6 ? 30s : 15s);
-                    break;
-                case EVENT_BERSERK:
-                    me->CastSpell(me, SPELL_BERSERK, true);
-                    break;
-                case EVENT_NECROTIC_AURA_FADING:
-                    Talk(SAY_NECROTIC_AURA_FADING);
-                    break;
-                case EVENT_NECROTIC_AURA_REMOVED:
-                    Talk(SAY_NECROTIC_AURA_REMOVED);
-                    break;
+            case EVENT_SUMMON_SPORE:
+                me->CastSpell(me, SPELL_SUMMON_SPORE, true);
+                events.Repeat(35s);
+                break;
+            case EVENT_NECROTIC_AURA:
+                me->CastSpell(me, SPELL_NECROTIC_AURA, true);
+                Talk(SAY_NECROTIC_AURA_APPLIED);
+                events.ScheduleEvent(EVENT_NECROTIC_AURA_FADING, 14s);
+                events.ScheduleEvent(EVENT_NECROTIC_AURA_REMOVED, 17s);
+                events.Repeat(20s);
+                break;
+            case EVENT_DEATHBLOOM:
+                me->CastSpell(me, RAID_MODE(SPELL_DEATHBLOOM_10, SPELL_DEATHBLOOM_25), false);
+                events.Repeat(30s);
+                break;
+            case EVENT_INEVITABLE_DOOM:
+                me->CastSpell(me, RAID_MODE(SPELL_INEVITABLE_DOOM_10, SPELL_INEVITABLE_DOOM_25), false);
+                doomCounter++;
+                events.Repeat(doomCounter < 6 ? 30s : 15s);
+                break;
+            case EVENT_BERSERK:
+                me->CastSpell(me, SPELL_BERSERK, true);
+                break;
+            case EVENT_NECROTIC_AURA_FADING:
+                Talk(SAY_NECROTIC_AURA_FADING);
+                break;
+            case EVENT_NECROTIC_AURA_REMOVED:
+                Talk(SAY_NECROTIC_AURA_REMOVED);
+                break;
             }
             DoMeleeAttackIfReady();
         }
@@ -160,8 +160,8 @@ public:
         {
             // Calculate the distance between his home position to the gate
             if (me->GetExactDist(me->GetHomePosition().GetPositionX(),
-                                 me->GetHomePosition().GetPositionY(),
-                                 me->GetHomePosition().GetPositionZ()) > 50.0f)
+                me->GetHomePosition().GetPositionY(),
+                me->GetHomePosition().GetPositionZ()) > 50.0f)
             {
                 EnterEvadeMode();
                 return false;

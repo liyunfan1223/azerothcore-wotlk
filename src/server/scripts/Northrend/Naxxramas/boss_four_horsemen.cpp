@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boss_four_horsemen.h"
 #include "CreatureScript.h"
 #include "Player.h"
 #include "ScriptedCreature.h"
@@ -24,51 +23,79 @@
 #include "SpellScriptLoader.h"
 #include "naxxramas.h"
 
+enum Spells
+{
+    SPELL_BERSERK = 26662,
+    // Marks
+    SPELL_MARK_OF_KORTHAZZ = 28832,
+    SPELL_MARK_OF_BLAUMEUX = 28833,
+    SPELL_MARK_OF_RIVENDARE = 28834,
+    SPELL_MARK_OF_ZELIEK = 28835,
+    SPELL_MARK_DAMAGE = 28836,
+    // Korth'azz
+    SPELL_KORTHAZZ_METEOR_10 = 28884,
+    SPELL_KORTHAZZ_METEOR_25 = 57467,
+    // Blaumeux
+    SPELL_BLAUMEUX_SHADOW_BOLT_10 = 57374,
+    SPELL_BLAUMEUX_SHADOW_BOLT_25 = 57464,
+    SPELL_BLAUMEUX_VOID_ZONE_10 = 28863,
+    SPELL_BLAUMEUX_VOID_ZONE_25 = 57463,
+    SPELL_BLAUMEUX_UNYIELDING_PAIN = 57381,
+    // Zeliek
+    SPELL_ZELIEK_HOLY_WRATH_10 = 28883,
+    SPELL_ZELIEK_HOLY_WRATH_25 = 57466,
+    SPELL_ZELIEK_HOLY_BOLT_10 = 57376,
+    SPELL_ZELIEK_HOLY_BOLT_25 = 57465,
+    SPELL_ZELIEK_CONDEMNATION = 57377,
+    // Rivendare
+    SPELL_RIVENDARE_UNHOLY_SHADOW_10 = 28882,
+    SPELL_RIVENDARE_UNHOLY_SHADOW_25 = 57369
+};
 
 enum Events
 {
-    EVENT_MARK_CAST                     = 1,
-    EVENT_PRIMARY_SPELL                 = 2,
-    EVENT_SECONDARY_SPELL               = 3,
-    EVENT_BERSERK                       = 4
+    EVENT_MARK_CAST = 1,
+    EVENT_PRIMARY_SPELL = 2,
+    EVENT_SECONDARY_SPELL = 3,
+    EVENT_BERSERK = 4
 };
 
 enum Misc
 {
     // Movement
-    MOVE_PHASE_NONE                     = 0,
-    MOVE_PHASE_STARTED                  = 1,
-    MOVE_PHASE_FINISHED                 = 2,
+    MOVE_PHASE_NONE = 0,
+    MOVE_PHASE_STARTED = 1,
+    MOVE_PHASE_FINISHED = 2,
     // Horseman
-    HORSEMAN_ZELIEK                     = 0,
-    HORSEMAN_BLAUMEUX                   = 1,
-    HORSEMAN_RIVENDARE                  = 2,
-    HORSEMAN_KORTHAZZ                   = 3
+    HORSEMAN_ZELIEK = 0,
+    HORSEMAN_BLAUMEUX = 1,
+    HORSEMAN_RIVENDARE = 2,
+    HORSEMAN_KORTHAZZ = 3
 };
 
 enum FourHorsemen
 {
-    SAY_AGGRO                           = 0,
-    SAY_TAUNT                           = 1,
-    SAY_SPECIAL                         = 2,
-    SAY_SLAY                            = 3,
-    SAY_DEATH                           = 4,
-    EMOTE_RAGECAST                      = 7
+    SAY_AGGRO = 0,
+    SAY_TAUNT = 1,
+    SAY_SPECIAL = 2,
+    SAY_SLAY = 3,
+    SAY_DEATH = 4,
+    EMOTE_RAGECAST = 7
 };
 
 // MARKS
-const uint32 TABLE_SPELL_MARK[4] = {SPELL_MARK_OF_ZELIEK, SPELL_MARK_OF_BLAUMEUX, SPELL_MARK_OF_RIVENDARE, SPELL_MARK_OF_KORTHAZZ};
+const uint32 TABLE_SPELL_MARK[4] = { SPELL_MARK_OF_ZELIEK, SPELL_MARK_OF_BLAUMEUX, SPELL_MARK_OF_RIVENDARE, SPELL_MARK_OF_KORTHAZZ };
 
 // PRIMARY SPELL
-const uint32 TABLE_SPELL_PRIMARY_10[4] = {SPELL_ZELIEK_HOLY_BOLT_10, SPELL_BLAUMEUX_SHADOW_BOLT_10, SPELL_RIVENDARE_UNHOLY_SHADOW_10, SPELL_KORTHAZZ_METEOR_10};
-const uint32 TABLE_SPELL_PRIMARY_25[4] = {SPELL_ZELIEK_HOLY_BOLT_25, SPELL_BLAUMEUX_SHADOW_BOLT_25, SPELL_RIVENDARE_UNHOLY_SHADOW_25, SPELL_KORTHAZZ_METEOR_25};
+const uint32 TABLE_SPELL_PRIMARY_10[4] = { SPELL_ZELIEK_HOLY_BOLT_10, SPELL_BLAUMEUX_SHADOW_BOLT_10, SPELL_RIVENDARE_UNHOLY_SHADOW_10, SPELL_KORTHAZZ_METEOR_10 };
+const uint32 TABLE_SPELL_PRIMARY_25[4] = { SPELL_ZELIEK_HOLY_BOLT_25, SPELL_BLAUMEUX_SHADOW_BOLT_25, SPELL_RIVENDARE_UNHOLY_SHADOW_25, SPELL_KORTHAZZ_METEOR_25 };
 
 // PUNISH
-const uint32 TABLE_SPELL_PUNISH[4] = {SPELL_ZELIEK_CONDEMNATION, SPELL_BLAUMEUX_UNYIELDING_PAIN, 0, 0};
+const uint32 TABLE_SPELL_PUNISH[4] = { SPELL_ZELIEK_CONDEMNATION, SPELL_BLAUMEUX_UNYIELDING_PAIN, 0, 0 };
 
 // SECONDARY SPELL
-const uint32 TABLE_SPELL_SECONDARY_10[4] = {SPELL_ZELIEK_HOLY_WRATH_10, SPELL_BLAUMEUX_VOID_ZONE_10, 0, 0};
-const uint32 TABLE_SPELL_SECONDARY_25[4] = {SPELL_ZELIEK_HOLY_WRATH_25, SPELL_BLAUMEUX_VOID_ZONE_25, 0, 0};
+const uint32 TABLE_SPELL_SECONDARY_10[4] = { SPELL_ZELIEK_HOLY_WRATH_10, SPELL_BLAUMEUX_VOID_ZONE_10, 0, 0 };
+const uint32 TABLE_SPELL_SECONDARY_25[4] = { SPELL_ZELIEK_HOLY_WRATH_25, SPELL_BLAUMEUX_VOID_ZONE_25, 0, 0 };
 
 const Position WaypointPositions[12] =
 {
@@ -93,7 +120,7 @@ const Position WaypointPositions[12] =
 class boss_four_horsemen : public CreatureScript
 {
 public:
-    boss_four_horsemen() : CreatureScript("boss_four_horsemen") { }
+    boss_four_horsemen() : CreatureScript("boss_four_horsemen") {}
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
@@ -106,18 +133,18 @@ public:
         {
             switch (me->GetEntry())
             {
-                case NPC_SIR_ZELIEK:
-                    horsemanId = HORSEMAN_ZELIEK;
-                    break;
-                case NPC_LADY_BLAUMEUX:
-                    horsemanId = HORSEMAN_BLAUMEUX;
-                    break;
-                case NPC_BARON_RIVENDARE:
-                    horsemanId = HORSEMAN_RIVENDARE;
-                    break;
-                case NPC_THANE_KORTHAZZ:
-                    horsemanId = HORSEMAN_KORTHAZZ;
-                    break;
+            case NPC_SIR_ZELIEK:
+                horsemanId = HORSEMAN_ZELIEK;
+                break;
+            case NPC_LADY_BLAUMEUX:
+                horsemanId = HORSEMAN_BLAUMEUX;
+                break;
+            case NPC_BARON_RIVENDARE:
+                horsemanId = HORSEMAN_RIVENDARE;
+                break;
+            case NPC_THANE_KORTHAZZ:
+                horsemanId = HORSEMAN_KORTHAZZ;
+                break;
             }
         }
 
@@ -130,18 +157,18 @@ public:
         {
             switch (me->GetEntry())
             {
-                case NPC_THANE_KORTHAZZ:
-                    currentWaypoint = 0;
-                    break;
-                case NPC_LADY_BLAUMEUX:
-                    currentWaypoint = 3;
-                    break;
-                case NPC_BARON_RIVENDARE:
-                    currentWaypoint = 6;
-                    break;
-                case NPC_SIR_ZELIEK:
-                    currentWaypoint = 9;
-                    break;
+            case NPC_THANE_KORTHAZZ:
+                currentWaypoint = 0;
+                break;
+            case NPC_LADY_BLAUMEUX:
+                currentWaypoint = 3;
+                break;
+            case NPC_BARON_RIVENDARE:
+                currentWaypoint = 6;
+                break;
+            case NPC_SIR_ZELIEK:
+                currentWaypoint = 9;
+                break;
             }
             me->GetMotionMaster()->MovePoint(currentWaypoint, WaypointPositions[currentWaypoint]);
         }
@@ -226,7 +253,7 @@ public:
             instance->StorePersistentData(PERSISTENT_DATA_IMMORTAL_FAIL, 1);
         }
 
-        void JustDied(Unit*  killer) override
+        void JustDied(Unit* killer) override
         {
             BossAI::JustDied(killer);
             Talk(SAY_DEATH);
@@ -271,23 +298,23 @@ public:
 
             switch (events.ExecuteEvent())
             {
-                case EVENT_MARK_CAST:
-                    me->CastSpell(me, TABLE_SPELL_MARK[horsemanId], false);
-                    events.Repeat((me->GetEntry() == NPC_LADY_BLAUMEUX || me->GetEntry() == NPC_SIR_ZELIEK) ? 15s : 12s);
-                    return;
-                case EVENT_BERSERK:
-                    Talk(SAY_SPECIAL);
-                    me->CastSpell(me, SPELL_BERSERK, true);
-                    return;
-                case EVENT_PRIMARY_SPELL:
-                    Talk(SAY_TAUNT);
-                    me->CastSpell(me->GetVictim(), RAID_MODE(TABLE_SPELL_PRIMARY_10[horsemanId], TABLE_SPELL_PRIMARY_25[horsemanId]), false);
-                    events.Repeat(15s);
-                    return;
-                case EVENT_SECONDARY_SPELL:
-                    me->CastSpell(me->GetVictim(), RAID_MODE(TABLE_SPELL_SECONDARY_10[horsemanId], TABLE_SPELL_SECONDARY_25[horsemanId]), false);
-                    events.Repeat(15s);
-                    return;
+            case EVENT_MARK_CAST:
+                me->CastSpell(me, TABLE_SPELL_MARK[horsemanId], false);
+                events.Repeat((me->GetEntry() == NPC_LADY_BLAUMEUX || me->GetEntry() == NPC_SIR_ZELIEK) ? 15s : 12s);
+                return;
+            case EVENT_BERSERK:
+                Talk(SAY_SPECIAL);
+                me->CastSpell(me, SPELL_BERSERK, true);
+                return;
+            case EVENT_PRIMARY_SPELL:
+                Talk(SAY_TAUNT);
+                me->CastSpell(me->GetVictim(), RAID_MODE(TABLE_SPELL_PRIMARY_10[horsemanId], TABLE_SPELL_PRIMARY_25[horsemanId]), false);
+                events.Repeat(15s);
+                return;
+            case EVENT_SECONDARY_SPELL:
+                me->CastSpell(me->GetVictim(), RAID_MODE(TABLE_SPELL_SECONDARY_10[horsemanId], TABLE_SPELL_SECONDARY_25[horsemanId]), false);
+                events.Repeat(15s);
+                return;
             }
 
             if (me->GetEntry() == NPC_LADY_BLAUMEUX || me->GetEntry() == NPC_SIR_ZELIEK)
@@ -333,27 +360,27 @@ class spell_four_horsemen_mark_aura : public AuraScript
             int32 damage;
             switch (GetStackAmount())
             {
-                case 1:
-                    damage = 0;
-                    break;
-                case 2:
-                    damage = 500;
-                    break;
-                case 3:
-                    damage = 1500;
-                    break;
-                case 4:
-                    damage = 4000;
-                    break;
-                case 5:
-                    damage = 12500;
-                    break;
-                case 6:
-                    damage = 20000;
-                    break;
-                default:
-                    damage = 20000 + 1000 * (GetStackAmount() - 7);
-                    break;
+            case 1:
+                damage = 0;
+                break;
+            case 2:
+                damage = 500;
+                break;
+            case 3:
+                damage = 1500;
+                break;
+            case 4:
+                damage = 4000;
+                break;
+            case 5:
+                damage = 12500;
+                break;
+            case 6:
+                damage = 20000;
+                break;
+            default:
+                damage = 20000 + 1000 * (GetStackAmount() - 7);
+                break;
             }
             if (damage)
             {

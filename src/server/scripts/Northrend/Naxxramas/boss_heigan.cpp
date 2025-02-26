@@ -20,29 +20,46 @@
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
 
-#include "boss_heigan.h"
+enum Says
+{
+    SAY_AGGRO = 0,
+    SAY_SLAY = 1,
+    SAY_TAUNT = 2,
+    EMOTE_DEATH = 3,
+    EMOTE_DANCE = 4,
+    EMOTE_DANCE_END = 5,
+    SAY_DANCE = 6
+};
 
+enum Spells
+{
+    SPELL_SPELL_DISRUPTION = 29310,
+    SPELL_DECREPIT_FEVER_10 = 29998,
+    SPELL_DECREPIT_FEVER_25 = 55011,
+    SPELL_PLAGUE_CLOUD = 29350,
+    SPELL_TELEPORT_SELF = 30211
+};
 
 enum Events
 {
-    EVENT_DISRUPTION                = 1,
-    EVENT_DECEPIT_FEVER             = 2,
-    EVENT_ERUPT_SECTION             = 3,
-    EVENT_SWITCH_PHASE              = 4,
-    EVENT_SAFETY_DANCE              = 5,
-    EVENT_PLAGUE_CLOUD              = 6
+    EVENT_DISRUPTION = 1,
+    EVENT_DECEPIT_FEVER = 2,
+    EVENT_ERUPT_SECTION = 3,
+    EVENT_SWITCH_PHASE = 4,
+    EVENT_SAFETY_DANCE = 5,
+    EVENT_PLAGUE_CLOUD = 6
 };
 
 enum Misc
 {
-    PHASE_SLOW_DANCE                = 0,
-    PHASE_FAST_DANCE                = 1
+    PHASE_SLOW_DANCE = 0,
+    PHASE_FAST_DANCE = 1
 };
 
 class boss_heigan : public CreatureScript
 {
 public:
-    boss_heigan() : CreatureScript("boss_heigan") { }
+    boss_heigan() : CreatureScript("boss_heigan") {}
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
@@ -52,7 +69,8 @@ public:
     struct boss_heiganAI : public BossAI
     {
         explicit boss_heiganAI(Creature* c) : BossAI(c, BOSS_HEIGAN)
-        {}
+        {
+        }
 
         EventMap events;
         uint8 currentPhase{};
@@ -77,7 +95,7 @@ public:
             instance->StorePersistentData(PERSISTENT_DATA_IMMORTAL_FAIL, 1);
         }
 
-        void JustDied(Unit*  killer) override
+        void JustDied(Unit* killer) override
         {
             BossAI::JustDied(killer);
             Talk(EMOTE_DEATH);
@@ -146,59 +164,59 @@ public:
 
             switch (events.ExecuteEvent())
             {
-                case EVENT_DISRUPTION:
-                    me->CastSpell(me, SPELL_SPELL_DISRUPTION, false);
-                    events.Repeat(10s);
-                    break;
-                case EVENT_DECEPIT_FEVER:
-                    me->CastSpell(me, RAID_MODE(SPELL_DECREPIT_FEVER_10, SPELL_DECREPIT_FEVER_25), false);
-                    events.Repeat(22s, 25s);
-                    break;
-                case EVENT_PLAGUE_CLOUD:
-                    me->CastSpell(me, SPELL_PLAGUE_CLOUD, false);
-                    break;
-                case EVENT_SWITCH_PHASE:
-                    if (currentPhase == PHASE_SLOW_DANCE)
-                    {
-                        StartFightPhase(PHASE_FAST_DANCE);
-                    }
-                    else
-                    {
-                        StartFightPhase(PHASE_SLOW_DANCE);
-                        Talk(EMOTE_DANCE_END); // avoid play the emote on aggro
-                    }
-                    break;
-                case EVENT_ERUPT_SECTION:
+            case EVENT_DISRUPTION:
+                me->CastSpell(me, SPELL_SPELL_DISRUPTION, false);
+                events.Repeat(10s);
+                break;
+            case EVENT_DECEPIT_FEVER:
+                me->CastSpell(me, RAID_MODE(SPELL_DECREPIT_FEVER_10, SPELL_DECREPIT_FEVER_25), false);
+                events.Repeat(22s, 25s);
+                break;
+            case EVENT_PLAGUE_CLOUD:
+                me->CastSpell(me, SPELL_PLAGUE_CLOUD, false);
+                break;
+            case EVENT_SWITCH_PHASE:
+                if (currentPhase == PHASE_SLOW_DANCE)
                 {
-                    instance->SetData(DATA_HEIGAN_ERUPTION, currentSection);
-                    if (currentSection == 3)
-                        moveRight = false;
-                    else if (currentSection == 0)
-                        moveRight = true;
-
-                    moveRight ? currentSection++ : currentSection--;
-
-                    if (currentPhase == PHASE_SLOW_DANCE)
-                        Talk(SAY_TAUNT);
-
-                    events.Repeat(currentPhase == PHASE_SLOW_DANCE ? 10s : 4s);
-                    break;
+                    StartFightPhase(PHASE_FAST_DANCE);
                 }
-                case EVENT_SAFETY_DANCE:
+                else
                 {
-                    Map::PlayerList const& pList = me->GetMap()->GetPlayers();
-                    for (auto const& itr : pList)
-                    {
-                        if (IsInRoom(itr.GetSource()) && !itr.GetSource()->IsAlive())
-                        {
-                            instance->SetData(DATA_DANCE_FAIL, 0);
-                            instance->StorePersistentData(PERSISTENT_DATA_IMMORTAL_FAIL, 1);
-                            return;
-                        }
-                    }
-                    events.Repeat(5s);
-                    return;
+                    StartFightPhase(PHASE_SLOW_DANCE);
+                    Talk(EMOTE_DANCE_END); // avoid play the emote on aggro
                 }
+                break;
+            case EVENT_ERUPT_SECTION:
+            {
+                instance->SetData(DATA_HEIGAN_ERUPTION, currentSection);
+                if (currentSection == 3)
+                    moveRight = false;
+                else if (currentSection == 0)
+                    moveRight = true;
+
+                moveRight ? currentSection++ : currentSection--;
+
+                if (currentPhase == PHASE_SLOW_DANCE)
+                    Talk(SAY_TAUNT);
+
+                events.Repeat(currentPhase == PHASE_SLOW_DANCE ? 10s : 4s);
+                break;
+            }
+            case EVENT_SAFETY_DANCE:
+            {
+                Map::PlayerList const& pList = me->GetMap()->GetPlayers();
+                for (auto const& itr : pList)
+                {
+                    if (IsInRoom(itr.GetSource()) && !itr.GetSource()->IsAlive())
+                    {
+                        instance->SetData(DATA_DANCE_FAIL, 0);
+                        instance->StorePersistentData(PERSISTENT_DATA_IMMORTAL_FAIL, 1);
+                        return;
+                    }
+                }
+                events.Repeat(5s);
+                return;
+            }
             }
 
             DoMeleeAttackIfReady();

@@ -15,43 +15,54 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boss_noth.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
 
+enum Says
+{
+    SAY_AGGRO = 0,
+    SAY_SUMMON = 1,
+    SAY_SLAY = 2,
+    SAY_DEATH = 3,
+    EMOTE_SUMMON = 4,
+    EMOTE_SUMMON_WAVE = 5,
+    EMOTE_TELEPORT_BALCONY = 6,
+    EMOTE_TELEPORT_BACK = 7,
+    EMOTE_BLINK = 8
+};
 
 enum Spells
 {
-    SPELL_CURSE_OF_THE_PLAGUEBRINGER_10     = 29213,
-    SPELL_CURSE_OF_THE_PLAGUEBRINGER_25     = 54835,
-    SPELL_CRIPPLE_10                        = 29212,
-    SPELL_CRIPPLE_25                        = 54814,
-    SPELL_SUMMON_PLAGUED_WARRIORS           = 29237,
-    SPELL_TELEPORT                          = 29216,
-    SPELL_TELEPORT_BACK                     = 29231,
-    SPELL_BERSERK                           = 68378,
-    SPELL_BLINK                             = 29208
+    SPELL_CURSE_OF_THE_PLAGUEBRINGER_10 = 29213,
+    SPELL_CURSE_OF_THE_PLAGUEBRINGER_25 = 54835,
+    SPELL_CRIPPLE_10 = 29212,
+    SPELL_CRIPPLE_25 = 54814,
+    SPELL_SUMMON_PLAGUED_WARRIORS = 29237,
+    SPELL_TELEPORT = 29216,
+    SPELL_TELEPORT_BACK = 29231,
+    SPELL_BERSERK = 68378,
+    SPELL_BLINK = 29208
 };
 
 enum Events
 {
-    EVENT_CURSE                             = 1,
-    EVENT_CRIPPLE                           = 2,
-    EVENT_SUMMON_PLAGUED_WARRIOR_ANNOUNCE   = 3,
-    EVENT_MOVE_TO_BALCONY                   = 4,
-    EVENT_BLINK                             = 5,
-    EVENT_MOVE_TO_GROUND                    = 6,
-    EVENT_SUMMON_PLAGUED_WARRIOR_REAL       = 7,
-    EVENT_BALCONY_SUMMON_ANNOUNCE           = 8,
-    EVENT_BALCONY_SUMMON_REAL               = 9
+    EVENT_CURSE = 1,
+    EVENT_CRIPPLE = 2,
+    EVENT_SUMMON_PLAGUED_WARRIOR_ANNOUNCE = 3,
+    EVENT_MOVE_TO_BALCONY = 4,
+    EVENT_BLINK = 5,
+    EVENT_MOVE_TO_GROUND = 6,
+    EVENT_SUMMON_PLAGUED_WARRIOR_REAL = 7,
+    EVENT_BALCONY_SUMMON_ANNOUNCE = 8,
+    EVENT_BALCONY_SUMMON_REAL = 9
 };
 
 enum Misc
 {
-    NPC_PLAGUED_WARRIOR                     = 16984,
-    NPC_PLAGUED_CHAMPION                    = 16983,
-    NPC_PLAGUED_GUARDIAN                    = 16981
+    NPC_PLAGUED_WARRIOR = 16984,
+    NPC_PLAGUED_CHAMPION = 16983,
+    NPC_PLAGUED_GUARDIAN = 16981
 };
 
 const Position summoningPosition[5] =
@@ -63,12 +74,12 @@ const Position summoningPosition[5] =
     {2652.02f, -3459.13f, 262.50f, 5.39f}
 };
 
-const Position nothPosition = {2684.94f, -3502.53f, 261.31f, 4.7f};
+const Position nothPosition = { 2684.94f, -3502.53f, 261.31f, 4.7f };
 
 class boss_noth : public CreatureScript
 {
 public:
-    boss_noth() : CreatureScript("boss_noth") { }
+    boss_noth() : CreatureScript("boss_noth") {}
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
@@ -78,7 +89,8 @@ public:
     struct boss_nothAI : public BossAI
     {
         explicit boss_nothAI(Creature* c) : BossAI(c, BOSS_NOTH), summons(me)
-        {}
+        {
+        }
 
         uint8 timesInBalcony;
         EventMap events;
@@ -158,7 +170,7 @@ public:
             summon->SetInCombatWithZone();
         }
 
-        void JustDied(Unit*  killer) override
+        void JustDied(Unit* killer) override
         {
             if (me->GetPositionZ() > 270.27f)
             {
@@ -193,67 +205,67 @@ public:
             switch (events.ExecuteEvent())
             {
                 // GROUND
-                case EVENT_CURSE:
-                    if (events.GetPhaseMask() == 0)
-                    {
-                        me->CastCustomSpell(RAID_MODE(SPELL_CURSE_OF_THE_PLAGUEBRINGER_10, SPELL_CURSE_OF_THE_PLAGUEBRINGER_25), SPELLVALUE_MAX_TARGETS, RAID_MODE(3, 10), me, false);
-                    }
-                    events.Repeat(25s);
-                    break;
-                case EVENT_SUMMON_PLAGUED_WARRIOR_ANNOUNCE:
-                    Talk(SAY_SUMMON);
-                    Talk(EMOTE_SUMMON);
-                    events.Repeat(30s);
-                    events.ScheduleEvent(EVENT_SUMMON_PLAGUED_WARRIOR_REAL, 4s);
-                    break;
-                case EVENT_SUMMON_PLAGUED_WARRIOR_REAL:
-                    me->CastSpell(me, SPELL_SUMMON_PLAGUED_WARRIORS, true);
-                    SummonHelper(NPC_PLAGUED_WARRIOR, RAID_MODE(2, 3));
-                    break;
-                case EVENT_MOVE_TO_BALCONY:
-                    Talk(EMOTE_TELEPORT_BALCONY);
-                    me->CastSpell(me, SPELL_TELEPORT, true);
-                    StartBalconyPhase();
-                    break;
-                case EVENT_BLINK:
-                    DoResetThreatList();
-                    me->CastSpell(me, RAID_MODE(SPELL_CRIPPLE_10, SPELL_CRIPPLE_25), false);
-                    me->CastSpell(me, SPELL_BLINK, true);
-                    Talk(EMOTE_BLINK);
-                    events.Repeat(30s);
-                    break;
+            case EVENT_CURSE:
+                if (events.GetPhaseMask() == 0)
+                {
+                    me->CastCustomSpell(RAID_MODE(SPELL_CURSE_OF_THE_PLAGUEBRINGER_10, SPELL_CURSE_OF_THE_PLAGUEBRINGER_25), SPELLVALUE_MAX_TARGETS, RAID_MODE(3, 10), me, false);
+                }
+                events.Repeat(25s);
+                break;
+            case EVENT_SUMMON_PLAGUED_WARRIOR_ANNOUNCE:
+                Talk(SAY_SUMMON);
+                Talk(EMOTE_SUMMON);
+                events.Repeat(30s);
+                events.ScheduleEvent(EVENT_SUMMON_PLAGUED_WARRIOR_REAL, 4s);
+                break;
+            case EVENT_SUMMON_PLAGUED_WARRIOR_REAL:
+                me->CastSpell(me, SPELL_SUMMON_PLAGUED_WARRIORS, true);
+                SummonHelper(NPC_PLAGUED_WARRIOR, RAID_MODE(2, 3));
+                break;
+            case EVENT_MOVE_TO_BALCONY:
+                Talk(EMOTE_TELEPORT_BALCONY);
+                me->CastSpell(me, SPELL_TELEPORT, true);
+                StartBalconyPhase();
+                break;
+            case EVENT_BLINK:
+                DoResetThreatList();
+                me->CastSpell(me, RAID_MODE(SPELL_CRIPPLE_10, SPELL_CRIPPLE_25), false);
+                me->CastSpell(me, SPELL_BLINK, true);
+                Talk(EMOTE_BLINK);
+                events.Repeat(30s);
+                break;
                 // BALCONY
-                case EVENT_BALCONY_SUMMON_ANNOUNCE:
-                    Talk(EMOTE_SUMMON_WAVE);
-                    events.Repeat(30s);
-                    events.ScheduleEvent(EVENT_BALCONY_SUMMON_REAL, 4s);
+            case EVENT_BALCONY_SUMMON_ANNOUNCE:
+                Talk(EMOTE_SUMMON_WAVE);
+                events.Repeat(30s);
+                events.ScheduleEvent(EVENT_BALCONY_SUMMON_REAL, 4s);
+                break;
+            case EVENT_BALCONY_SUMMON_REAL:
+                me->CastSpell(me, SPELL_SUMMON_PLAGUED_WARRIORS, true); // visual
+                switch (timesInBalcony)
+                {
+                case 0:
+                    SummonHelper(NPC_PLAGUED_CHAMPION, RAID_MODE(2, 4));
                     break;
-                case EVENT_BALCONY_SUMMON_REAL:
-                    me->CastSpell(me, SPELL_SUMMON_PLAGUED_WARRIORS, true); // visual
-                    switch (timesInBalcony)
-                    {
-                         case 0:
-                             SummonHelper(NPC_PLAGUED_CHAMPION, RAID_MODE(2, 4));
-                             break;
-                         case 1:
-                             SummonHelper(NPC_PLAGUED_CHAMPION, RAID_MODE(1, 2));
-                             SummonHelper(NPC_PLAGUED_GUARDIAN, RAID_MODE(1, 2));
-                             break;
-                         default:
-                             SummonHelper(NPC_PLAGUED_GUARDIAN, RAID_MODE(2, 4));
-                             break;
-                    }
+                case 1:
+                    SummonHelper(NPC_PLAGUED_CHAMPION, RAID_MODE(1, 2));
+                    SummonHelper(NPC_PLAGUED_GUARDIAN, RAID_MODE(1, 2));
                     break;
-                case EVENT_MOVE_TO_GROUND:
-                    Talk(EMOTE_TELEPORT_BACK);
-                    me->CastSpell(me, SPELL_TELEPORT_BACK, true);
-                    timesInBalcony++;
-                    if (timesInBalcony == 3)
-                    {
-                        DoCastSelf(SPELL_BERSERK);
-                    }
-                    StartGroundPhase();
+                default:
+                    SummonHelper(NPC_PLAGUED_GUARDIAN, RAID_MODE(2, 4));
                     break;
+                }
+                break;
+            case EVENT_MOVE_TO_GROUND:
+                Talk(EMOTE_TELEPORT_BACK);
+                me->CastSpell(me, SPELL_TELEPORT_BACK, true);
+                timesInBalcony++;
+                if (timesInBalcony == 3)
+                {
+                    DoCastSelf(SPELL_BERSERK);
+                }
+                StartGroundPhase();
+                break;
             }
             if (me->HasReactState(REACT_AGGRESSIVE))
                 DoMeleeAttackIfReady();

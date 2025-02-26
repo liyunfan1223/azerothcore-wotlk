@@ -15,7 +15,6 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "boss_faerlina.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "SpellInfo.h"
@@ -23,39 +22,39 @@
 
 enum Yells
 {
-    SAY_GREET                           = 0,
-    SAY_AGGRO                           = 1,
-    SAY_SLAY                            = 2,
-    SAY_DEATH                           = 3,
-    EMOTE_WIDOWS_EMBRACE                = 4,
-    EMOTE_FRENZY                        = 5,
-    SAY_FRENZY                          = 6
+    SAY_GREET = 0,
+    SAY_AGGRO = 1,
+    SAY_SLAY = 2,
+    SAY_DEATH = 3,
+    EMOTE_WIDOWS_EMBRACE = 4,
+    EMOTE_FRENZY = 5,
+    SAY_FRENZY = 6
 };
 
 enum Spells
 {
-    SPELL_POISON_BOLT_VOLLEY            = 28796,
-    SPELL_RAIN_OF_FIRE                  = 28794,
-    SPELL_FRENZY                        = 28798,
-    SPELL_WIDOWS_EMBRACE                = 28732,
-    SPELL_MINION_WIDOWS_EMBRACE         = 54097
+    SPELL_POISON_BOLT_VOLLEY = 28796,
+    SPELL_RAIN_OF_FIRE = 28794,
+    SPELL_FRENZY = 28798,
+    SPELL_WIDOWS_EMBRACE = 28732,
+    SPELL_MINION_WIDOWS_EMBRACE = 54097
 };
 
 enum Groups
 {
-    GROUP_FRENZY                        = 1
+    GROUP_FRENZY = 1
 };
 
 enum Misc
 {
-    NPC_NAXXRAMAS_WORSHIPPER            = 16506,
-    NPC_NAXXRAMAS_FOLLOWER              = 16505
+    NPC_NAXXRAMAS_WORSHIPPER = 16506,
+    NPC_NAXXRAMAS_FOLLOWER = 16505
 };
 
 class boss_faerlina : public CreatureScript
 {
 public:
-    boss_faerlina() : CreatureScript("boss_faerlina") { }
+    boss_faerlina() : CreatureScript("boss_faerlina") {}
 
     CreatureAI* GetAI(Creature* pCreature) const override
     {
@@ -64,7 +63,7 @@ public:
 
     struct boss_faerlinaAI : public BossAI
     {
-        boss_faerlinaAI(Creature* c) : BossAI(c, BOSS_FAERLINA), _introDone(false) { }
+        boss_faerlinaAI(Creature* c) : BossAI(c, BOSS_FAERLINA), _introDone(false) {}
 
         void SummonHelpers()
         {
@@ -93,14 +92,14 @@ public:
             summons.DoZoneInCombat();
             Talk(SAY_AGGRO);
 
-            ScheduleTimedEvent(7s, 15s, [&]{
+            ScheduleTimedEvent(7s, 15s, [&] {
                 if (!me->HasAura(SPELL_WIDOWS_EMBRACE))
                     DoCastVictim(SPELL_POISON_BOLT_VOLLEY);
-            }, 7s, 15s);
+                }, 7s, 15s);
 
             ScheduleTimedEvent(8s, 18s, [&] {
                 DoCastRandomTarget(SPELL_RAIN_OF_FIRE);
-            }, 8s, 18s);
+                }, 8s, 18s);
 
             scheduler.Schedule(60s, 80s, GROUP_FRENZY, [this](TaskContext context) {
                 if (!me->HasAura(SPELL_WIDOWS_EMBRACE))
@@ -112,7 +111,7 @@ public:
                 }
                 else
                     context.Repeat(30s);
-            });
+                });
         }
 
         void MoveInLineOfSight(Unit* who) override
@@ -136,7 +135,7 @@ public:
             instance->StorePersistentData(PERSISTENT_DATA_IMMORTAL_FAIL, 1);
         }
 
-        void JustDied(Unit*  killer) override
+        void JustDied(Unit* killer) override
         {
             BossAI::JustDied(killer);
             Talk(SAY_DEATH);
@@ -155,8 +154,8 @@ public:
             }
         }
 
-        private:
-            bool _introDone;
+    private:
+        bool _introDone;
     };
 };
 
