@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boss_gothik.h"
 #include "CombatAI.h"
 #include "CreatureScript.h"
 #include "GridNotifiers.h"
@@ -24,11 +25,7 @@
 #include "naxxramas.h"
 
 
-    void Register() override
-    {
-        OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_gothik_shadow_bolt_volley::FilterTargets, EFFECT_0, TARGET_UNIT_SRC_AREA_ENEMY);
-    }
-};
+using namespace Gothik;
 
 void AddSC_boss_gothik()
 {

@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boss_gluth.h"
 #include "CreatureScript.h"
 #include "Player.h"
 #include "ScriptedCreature.h"
@@ -23,11 +24,7 @@
 #include "naxxramas.h"
 
 
-    void Register() override
-    {
-        OnEffectHitTarget += SpellEffectFn(spell_gluth_decimate::HandleScriptEffect, EFFECT_0, SPELL_EFFECT_SCRIPT_EFFECT);
-    }
-};
+using namespace Gluth;
 
 void AddSC_boss_gluth()
 {

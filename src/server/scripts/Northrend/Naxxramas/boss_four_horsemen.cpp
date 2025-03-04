@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boss_four_horsemen.h"
 #include "CreatureScript.h"
 #include "Player.h"
 #include "ScriptedCreature.h"
@@ -24,11 +25,7 @@
 #include "naxxramas.h"
 
 
-    void Register() override
-    {
-        AfterEffectApply += AuraEffectApplyFn(spell_four_horsemen_mark_aura::OnApply, EFFECT_0, SPELL_AURA_DUMMY, AURA_EFFECT_HANDLE_REAL_OR_REAPPLY_MASK);
-    }
-};
+using namespace FourHorsemen;
 
 void AddSC_boss_four_horsemen()
 {

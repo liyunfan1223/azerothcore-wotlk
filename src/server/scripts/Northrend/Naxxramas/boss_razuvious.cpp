@@ -15,22 +15,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boss_razuvious.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"
 #include "SpellInfo.h"
 
 
-            if (UpdateVictim())
-            {
-                if (!me->HasUnitState(UNIT_STATE_CASTING) || !me->IsCharmed())
-                {
-                    DoMeleeAttackIfReady();
-                }
-            }
-        }
-    };
-};
+using namespace Razuvious;
 
 void AddSC_boss_razuvious()
 {

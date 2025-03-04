@@ -1,4 +1,3 @@
-
 /*
  * This file is part of the AzerothCore Project. See AUTHORS file for Copyright information
  *
@@ -16,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boss_loatheb.h"
 #include "CreatureScript.h"
 #include "ScriptedCreature.h"
 #include "naxxramas.h"

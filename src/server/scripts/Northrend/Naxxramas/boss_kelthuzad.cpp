@@ -15,6 +15,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "boss_kelthuzad.h"
 #include "CreatureScript.h"
 #include "Player.h"
 #include "ScriptedCreature.h"
@@ -23,11 +24,7 @@
 #include "naxxramas.h"
 
 
-    void Register() override
-    {
-        OnEffectPeriodic += AuraEffectPeriodicFn(spell_kelthuzad_detonate_mana_aura::HandleScript, EFFECT_0, SPELL_AURA_PERIODIC_TRIGGER_SPELL);
-    }
-};
+using namespace Kelthuzad;
 
 void AddSC_boss_kelthuzad()
 {
