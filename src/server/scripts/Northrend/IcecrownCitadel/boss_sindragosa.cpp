@@ -414,8 +414,6 @@ public:
                     me->SetSpeed(MOVE_RUN, me->GetCreatureTemplate()->speed_run);
                     me->SetHomePosition(SindragosaLandPos);
                     me->RemoveUnitFlag(UNIT_FLAG_NON_ATTACKABLE);
-
-                    // Sindragosa enters combat as soon as she lands
                     me->SetInCombatWithZone();
                     break;
                 case POINT_TAKEOFF:
@@ -424,7 +422,7 @@ public:
                 case POINT_AIR_PHASE:
                     me->CastCustomSpell(SPELL_ICE_TOMB_TARGET, SPELLVALUE_MAX_TARGETS, RAID_MODE<int32>(2, 5, 2, 6), nullptr);
                     me->SetFacingTo(float(M_PI));
-                    events.ScheduleEvent(EVENT_AIR_MOVEMENT_FAR, 0ms); // won't be processed during cast time anyway, so 0
+                    events.ScheduleEvent(EVENT_AIR_MOVEMENT_FAR, 0ms);
                     events.ScheduleEvent(EVENT_FROST_BOMB, 7s);
                     _bombCount = 0;
                     break;
@@ -435,15 +433,13 @@ public:
                     events.ScheduleEvent(EVENT_LAND_GROUND, 0ms);
                     break;
                 case POINT_LAND_GROUND:
-                    {
-                        _isInAirPhase = false;
-                        me->SetDisableGravity(false);
-                        me->SetSpeed(MOVE_RUN, me->GetCreatureTemplate()->speed_run);
-                        me->SetReactState(REACT_AGGRESSIVE);
-                        if (Unit* target = me->SelectVictim())
-                            AttackStart(target);
-                        break;
-                    }
+                    _isInAirPhase = false;
+                    me->SetDisableGravity(false);
+                    me->SetSpeed(MOVE_RUN, me->GetCreatureTemplate()->speed_run);
+                    me->SetReactState(REACT_AGGRESSIVE);
+                    if (Unit* target = me->SelectVictim())
+                        AttackStart(target);
+                    break;
                 default:
                     break;
             }
@@ -453,7 +449,9 @@ public:
         {
             if (!damage || me->IsInEvadeMode())
                 return;
-
+        
+            // Commented out Phase 3 transition to prevent it from triggering
+            /*
             if (!_isThirdPhase)
             {
                 if (!HealthAbovePct(35))
@@ -463,7 +461,8 @@ public:
                     events.ScheduleEvent(EVENT_THIRD_PHASE_CHECK, 1s);
                 }
             }
-            else if (!_isBelow20Pct)
+            */
+            if (!_isBelow20Pct) // Still check for 20% emote, unrelated to Phase 3
             {
                 if (!HealthAbovePct(20))
                 {
@@ -531,7 +530,7 @@ public:
                     me->DisableRotate(true);
                     me->SetControlled(true, UNIT_STATE_ROOT);
                     me->SendMovementFlagUpdate();
-                    me->CastSpell(me->GetVictim(), _isThirdPhase ? SPELL_FROST_BREATH_P2 : SPELL_FROST_BREATH_P1, false);
+                    me->CastSpell(me->GetVictim(), SPELL_FROST_BREATH_P1, false); // Always use Phase 1 breath, no Phase 3
                     events.DelayEventsToMax(1, 0);
                     events.ScheduleEvent(EVENT_UNROOT, 0ms);
                     events.ScheduleEvent(EVENT_FROST_BREATH, 20s, 25s, EVENT_GROUP_LAND_PHASE);
@@ -557,23 +556,18 @@ public:
                     Talk(EMOTE_WARN_BLISTERING_COLD);
                     me->CastSpell(me, SPELL_BLISTERING_COLD, false);
                     events.ScheduleEvent(EVENT_BLISTERING_COLD_YELL, 5s, EVENT_GROUP_LAND_PHASE);
-                    if (_isThirdPhase)
-                        events.RescheduleEvent(EVENT_ICY_GRIP, 65s, 70s);
+                    // Removed Phase 3 rescheduling of Icy Grip since Phase 3 is disabled
                     break;
                 case EVENT_BLISTERING_COLD_YELL:
                     Talk(SAY_BLISTERING_COLD);
                     break;
-
-                // AIR PHASE EVENTS BELOW:
                 case EVENT_AIR_PHASE:
-                    // pussywizard: unroot may be scheduled after this event cos of events (time must be unique)
                     if (me->HasUnitState(UNIT_STATE_ROOT))
                     {
                         events.CancelEvent(EVENT_UNROOT);
                         me->DisableRotate(false);
                         me->SetControlled(false, UNIT_STATE_ROOT);
                     }
-
                     _isInAirPhase = true;
                     Talk(SAY_AIR_PHASE);
                     me->SetReactState(REACT_PASSIVE);
@@ -604,7 +598,7 @@ public:
                         {
                             destX = float(rand_norm()) * 75.0f + 4350.0f;
                             destY = float(rand_norm()) * 75.0f + 2450.0f;
-                            destZ = 205.0f; // random number close to ground, get exact in next call
+                            destZ = 205.0f;
                             me->UpdateGroundPositionZ(destX, destY, destZ);
                             bool ok = true;
                             for (std::list<GameObject*>::const_iterator itr = gl.begin(); itr != gl.end(); ++itr)
@@ -635,6 +629,8 @@ public:
                     events.ScheduleEvent(EVENT_ICY_GRIP, 35s, 40s, EVENT_GROUP_LAND_PHASE);
                     me->GetMotionMaster()->MoveLand(POINT_LAND_GROUND, SindragosaLandPos, 10.0f);
                     break;
+                // Commented out Phase 3 events to remove them entirely
+                /*
                 case EVENT_THIRD_PHASE_CHECK:
                     if (!_isInAirPhase)
                     {
@@ -658,6 +654,7 @@ public:
                     }
                     events.ScheduleEvent(EVENT_ICE_TOMB, 18s, 22s);
                     break;
+                */
                 default:
                     break;
             }
@@ -736,7 +733,6 @@ public:
                 Player* player = ObjectAccessor::GetPlayer(*me, _trappedPlayerGUID);
                 if (!player || !player->IsAlive() || !player->HasAura(SPELL_ICE_TOMB_DAMAGE))
                 {
-                    // Remove object
                     JustDied(me);
                     me->DespawnOrUnsummon();
                     return;
@@ -776,13 +772,10 @@ class spell_sindragosa_s_fury : public SpellScript
     bool Load() override
     {
         _targetCount = 0;
-
-        // This script should execute only in Icecrown Citadel
         if (InstanceMap* instance = GetCaster()->GetMap()->ToInstanceMap())
             if (instance->GetInstanceScript())
                 if (instance->GetScriptId() == sObjectMgr->GetScriptId(ICCScriptName))
                     return true;
-
         return false;
     }
 
@@ -792,7 +785,7 @@ class spell_sindragosa_s_fury : public SpellScript
         {
             float destX = float(rand_norm()) * 75.0f + 4350.0f;
             float destY = float(rand_norm()) * 75.0f + 2450.0f;
-            float destZ = 205.0f; // random number close to ground, get exact in next call
+            float destZ = 205.0f;
             GetCaster()->UpdateGroundPositionZ(destX, destY, destZ);
             dest->Relocate(destX, destY, destZ);
         }
@@ -815,7 +808,7 @@ class spell_sindragosa_s_fury : public SpellScript
         if (ResistFactor > 0.9f)
             ResistFactor = 0.9f;
 
-        uint32 damage = uint32( (GetEffectValue() / _targetCount) * (1.0f - ResistFactor));
+        uint32 damage = uint32((GetEffectValue() / _targetCount) * (1.0f - ResistFactor));
 
         SpellNonMeleeDamage damageInfo(GetCaster(), GetHitUnit(), GetSpellInfo(), GetSpellInfo()->SchoolMask);
         damageInfo.damage = damage;
@@ -852,7 +845,6 @@ public:
                 return true;
             if (_removeHealers == ((p->IsClass(CLASS_DRUID) && maxIndex == 2) || (p->IsClass(CLASS_PALADIN) && maxIndex == 0) || (p->IsClass(CLASS_PRIEST) && maxIndex <= 1) || (p->IsClass(CLASS_SHAMAN) && maxIndex == 2)))
                 return true;
-
             return false;
         }
         return true;
@@ -1108,12 +1100,10 @@ public:
         if (!unit->IsInMap(_caster))
             return true;
 
-        // for standard creatures check full LOS
         if (Creature* c = unit->ToCreature())
             if (!c->IsPet() && c->GetSpawnId())
                 return !_caster->IsWithinLOSInMap(unit);
 
-        // for players and pets check only dynamic los (ice block gameobjects)
         if (unit->IsUnit() && unit->ToUnit()->HasUnitState(UNIT_STATE_MELEE_ATTACKING) && unit->ToUnit()->IsWithinMeleeRange(_caster))
             return false;
         return !_caster->IsWithinLOSInMap(unit, VMAP::ModelIgnoreFlags::Nothing, LINEOFSIGHT_CHECK_GOBJECT_M2, 0, _caster->GetCombatReach() * 0.7);
@@ -1147,7 +1137,7 @@ class spell_sindragosa_soul_preservation_aura : public AuraScript
         return ValidateSpellInfo({ 72466, 72424 });
     }
 
-    void PeriodicTick(AuraEffect const*  /*aurEff*/)
+    void PeriodicTick(AuraEffect const* /*aurEff*/)
     {
         PreventDefaultAction();
         if (Unit* s = GetTarget())
@@ -1194,7 +1184,7 @@ public:
         {
             if (!me->isDead())
             {
-                _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());  // this cannot be in Reset because reset also happens on evade
+                _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());
                 Reset();
             }
         }
@@ -1225,7 +1215,7 @@ public:
         void JustRespawned() override
         {
             ScriptedAI::JustRespawned();
-            _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());  // this cannot be in Reset because reset also happens on evade
+            _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());
         }
 
         void JustDied(Unit* /*killer*/) override
@@ -1325,7 +1315,7 @@ public:
         {
             if (!me->isDead())
             {
-                _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());  // this cannot be in Reset because reset also happens on evade
+                _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());
                 Reset();
             }
         }
@@ -1356,7 +1346,7 @@ public:
         void JustRespawned() override
         {
             ScriptedAI::JustRespawned();
-            _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());  // this cannot be in Reset because reset also happens on evade
+            _instance->SetData(DATA_SINDRAGOSA_FROSTWYRMS, me->GetSpawnId());
         }
 
         void JustDied(Unit* /*killer*/) override
@@ -1566,7 +1556,7 @@ public:
             if (!me->isDead())
             {
                 if (me->GetEntry() == NPC_FROSTWING_WHELP)
-                    _instance->SetData(_frostwyrmId, me->GetSpawnId());  // this cannot be in Reset because reset also happens on evade
+                    _instance->SetData(_frostwyrmId, me->GetSpawnId());
                 Reset();
             }
         }
@@ -1606,10 +1596,8 @@ public:
         void JustRespawned() override
         {
             ScriptedAI::JustRespawned();
-
-            // Increase add count
             if (me->GetEntry() == NPC_FROSTWING_WHELP)
-                _instance->SetData(_frostwyrmId, me->GetSpawnId());  // this cannot be in Reset because reset also happens on evade
+                _instance->SetData(_frostwyrmId, me->GetSpawnId());
         }
 
         void SetData(uint32 type, uint32 data) override
@@ -1661,7 +1649,7 @@ public:
         EventMap _events;
         InstanceScript* _instance;
         uint32 _frostwyrmId;
-        bool _isTaunted; // Frostwing Whelp only
+        bool _isTaunted;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -1708,7 +1696,6 @@ class spell_frostwarden_handler_order_whelp : public SpellScript
 
     void HandleForcedCast(SpellEffIndex effIndex)
     {
-        // caster is Frostwarden Handler, target is player, caster of triggered is whelp
         PreventHitDefaultEffect(effIndex);
         std::list<Creature*> unitList;
         GetCreatureListWithEntryInGrid(unitList, GetCaster(), NPC_FROSTWING_WHELP, 150.0f);
@@ -1780,11 +1767,9 @@ class spell_sindragosa_frost_breath : public SpellScript
         if (!target)
             return;
 
-        // Check difficulty and quest status
         if (!(target->GetRaidDifficulty() & RAID_DIFFICULTY_MASK_25MAN) || target->GetQuestStatus(QUEST_FROST_INFUSION) != QUEST_STATUS_INCOMPLETE)
             return;
 
-        // Check if player has Shadow's Edge equipped and not ready for infusion
         if (!target->HasAura(SPELL_UNSATED_CRAVING) || target->HasAura(SPELL_FROST_IMBUED_BLADE))
             return;
 
