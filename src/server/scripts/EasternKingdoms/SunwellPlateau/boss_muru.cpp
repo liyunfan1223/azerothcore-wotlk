@@ -79,7 +79,7 @@ struct boss_muru : public BossAI
         // Radius of room is ~38.5f this might need adjusting a bit
         // Radius ~36.0 is right inside
         // Radius 20.0 is outer circle
-        if (!me->IsInCombat() && who->IsPlayer() && me->IsWithinDistInMap(who, 25.0f))
+        if (!me->IsInCombat() && who->IsPlayer() && who->GetPositionZ() > 69.0f && me->IsWithinDistInMap(who, 25.0f))
         {
             me->SetInCombatWithZone();
         }
@@ -285,27 +285,50 @@ struct npc_singularity : public NullCreatureAI
         me->m_Events.AddEventAtOffset([&] {
             DoCastSelf(SPELL_BLACK_HOLE_VISUAL2, true);
             DoCastSelf(SPELL_BLACK_HOLE_PASSIVE, true);
+
+            // Start following players after visuals are complete
+            FindAndFollowTarget();
         }, 8s);
 
         me->m_Events.AddEventAtOffset([&] {
             me->KillSelf();
         }, 17s);
+    }
 
-        scheduler.Schedule(8s, [this](TaskContext context)
+    void FindAndFollowTarget()
+    {
+        scheduler.Schedule(1s, [this](TaskContext context)
         {
+            Player* target = nullptr;
+
             auto const& playerList = me->GetMap()->GetPlayers();
             for (auto const& playerRef : playerList)
             {
                 if (Player* player = playerRef.GetSource())
+                {
                     if (me->IsWithinLOSInMap(player) && player->IsAlive() && !player->HasAura(SPELL_BLACK_HOLE_EFFECT))
                     {
-                        me->GetMotionMaster()->MovePoint(0, player->GetPositionX(), player->GetPositionY(), player->GetPositionZ(), false, true);
-                        context.Repeat();
-                        return;
+                        target = player;
+                        break;
                     }
+                }
             }
 
-            context.Repeat(1s);
+            if (target)
+            {
+                me->GetMotionMaster()->Clear();
+                me->GetMotionMaster()->MoveFollow(target, 0.0f, 0.0f);
+
+                scheduler.Schedule(6s, [this](TaskContext)
+                {
+                    FindAndFollowTarget();
+                });
+            }
+            else
+            {
+                // No valid target found, check again soon
+                context.Repeat(1s);
+            }
         });
     }
 
@@ -410,7 +433,9 @@ class spell_entropius_black_hole_effect : public SpellScript
         if (target->GetDistance(GetCaster()) < 5.0f)
         {
             float o = frand(0, 2 * M_PI);
-            pos.Relocate(GetCaster()->GetPositionX() + 4.0f * cos(o), GetCaster()->GetPositionY() + 4.0f * std::sin(o), GetCaster()->GetPositionZ() + frand(10.0f, 15.0f));
+            pos.Relocate(GetCaster()->GetPositionX() + 8.0f * cos(o),
+                         GetCaster()->GetPositionY() + 8.0f * std::sin(o),
+                         GetCaster()->GetPositionZ() + frand(2.0f, 5.0f));
         }
         else
             pos.Relocate(GetCaster()->GetPositionX(), GetCaster()->GetPositionY(), GetCaster()->GetPositionZ() + 1.0f);
@@ -450,9 +475,9 @@ class spell_entropius_negative_energy_periodic : public AuraScript
     }
 };
 
-class spell_muru_blackhole : public SpellScript
+class spell_gen_summon_target_floor : public SpellScript
 {
-    PrepareSpellScript(spell_muru_blackhole);
+    PrepareSpellScript(spell_gen_summon_target_floor);
 
     void ChangeSummonPos(SpellEffIndex /*effIndex*/)
     {
@@ -469,7 +494,7 @@ class spell_muru_blackhole : public SpellScript
 
     void Register() override
     {
-        OnEffectHit += SpellEffectFn(spell_muru_blackhole::ChangeSummonPos, EFFECT_0, SPELL_EFFECT_SUMMON);
+        OnEffectHit += SpellEffectFn(spell_gen_summon_target_floor::ChangeSummonPos, EFFECT_0, SPELL_EFFECT_SUMMON);
     }
 };
 
@@ -485,5 +510,5 @@ void AddSC_boss_muru()
     RegisterSpellScript(spell_entropius_void_zone_visual_aura);
     RegisterSpellScript(spell_entropius_black_hole_effect);
     RegisterSpellScript(spell_entropius_negative_energy_periodic);
-    RegisterSpellScript(spell_muru_blackhole);
+    RegisterSpellScript(spell_gen_summon_target_floor);
 }
