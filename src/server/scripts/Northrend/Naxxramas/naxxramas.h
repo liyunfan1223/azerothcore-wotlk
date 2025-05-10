@@ -305,10 +305,9 @@ enum NaxxramasMisc
     SOUND_SCREAM = 8873
 };
 
-static constexpr uint32 NaxxramasMapId = 533;
-static constexpr uint8 HeiganEruptSectionCount = 4;
-static constexpr uint8 HorsemanCount = 4;
-static constexpr uint8 AbominationKillCountReq = 18;
+static constexpr uint8 HeiganEruptSectionCount    = 4;
+static constexpr uint8 HorsemanCount              = 4;
+static constexpr uint8 AbominationKillCountReq    = 18;
 static constexpr uint8 TheDedicatedFew10PlayerReq = 9;
 static constexpr uint8 TheDedicatedFew25PlayerReq = 21;
 
