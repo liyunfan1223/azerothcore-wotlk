@@ -1140,6 +1140,7 @@ void World::LoadConfigSettings(bool reload)
     _int_configs[CONFIG_LFG_OPTIONSMASK]    = sConfigMgr->GetOption<int32>("DungeonFinder.OptionsMask", 5);
 
     _bool_configs[CONFIG_LFG_CAST_DESERTER] = sConfigMgr->GetOption<int32>("DungeonFinder.CastDeserter", true);
+    _bool_configs[CONFIG_LFG_ENABLE_COOLDOWN] = sConfigMgr->GetOption<int32>("DungeonFinder.EnableCooldown", true);
 
     // DBC_ItemAttributes
     _bool_configs[CONFIG_DBC_ENFORCE_ITEM_ATTRIBUTES] = sConfigMgr->GetOption<bool>("DBC.EnforceItemAttributes", true);
@@ -2390,6 +2391,21 @@ void World::ShutdownServ(uint32 time, uint32 options, uint8 exitcode, std::strin
     _shutdownMask = options;
     _exitCode = exitcode;
     _shutdownReason = reason;
+
+    auto const& playersOnline = sWorldSessionMgr->GetActiveSessionCount();
+
+    if (time < 5 && playersOnline)
+    {
+        // Set time to 5s for save all players
+        time = 5;
+    }
+
+    if (time >= 5)
+    {
+#ifdef MOD_PLAYERBOTS
+        sScriptMgr->OnPlayerbotLogoutBots();
+#endif
+    }
 
     LOG_DEBUG("server.worldserver", "Server shutdown called with ShutdownMask {}, ExitCode {}, Time {}, Reason {}", ShutdownMask(options), ShutdownExitCode(exitcode), secsToTimeString(time), reason);
 

@@ -27,9 +27,9 @@
 
 struct LivingPoisonData
 {
-    Position Start {};
-    Position End {};
-    uint32 DespawnTime {};
+    Position Start{};
+    Position End{};
+    uint32 DespawnTime{};
 };
 
 static const LivingPoisonData LivingPoisonDataList[3]
@@ -240,26 +240,26 @@ public:
     {
         switch (creature->GetEntry())
         {
-            case NPC_LIVING_MONSTROSITY:
-            case NPC_MAD_SCIENTIST:
-            case NPC_PATCHWORK_GOLEM:
-            case NPC_SURGICAL_ASSIST:
+        case NPC_LIVING_MONSTROSITY:
+        case NPC_MAD_SCIENTIST:
+        case NPC_PATCHWORK_GOLEM:
+        case NPC_SURGICAL_ASSIST:
+            _patchwerkRoomTrash.push_back(creature->GetGUID());
+            return;
+        case NPC_BILE_RETCHER:
+        case NPC_SLUDGE_BELCHER:
+            if (creature->GetPositionY() > -3258.0f) // we want only those inside the room, not before
                 _patchwerkRoomTrash.push_back(creature->GetGUID());
-                return;
-            case NPC_BILE_RETCHER:
-            case NPC_SLUDGE_BELCHER:
-                if (creature->GetPositionY() > -3258.0f) // we want only those inside the room, not before
-                    _patchwerkRoomTrash.push_back(creature->GetGUID());
-                return;
-            case NPC_BARON_RIVENDARE:
-            case NPC_SIR_ZELIEK:
-            case NPC_LADY_BLAUMEUX:
-            case NPC_THANE_KORTHAZZ:
-                if (++_horsemanLoaded == HorsemanCount)
-                    SetBossState(BOSS_HORSEMAN, GetBossState(BOSS_HORSEMAN));
-                break;
-            default:
-                break;
+            return;
+        case NPC_BARON_RIVENDARE:
+        case NPC_SIR_ZELIEK:
+        case NPC_LADY_BLAUMEUX:
+        case NPC_THANE_KORTHAZZ:
+            if (++_horsemanLoaded == HorsemanCount)
+                SetBossState(BOSS_HORSEMAN, GetBossState(BOSS_HORSEMAN));
+            break;
+        default:
+            break;
         }
 
         InstanceScript::OnCreatureCreate(creature);
@@ -269,34 +269,34 @@ public:
     {
         switch (go->GetGOInfo()->displayId)
         {
-            case GO_DISPLAY_ID_HEIGAN_ERUPTION1:
-            case GO_DISPLAY_ID_HEIGAN_ERUPTION2:
-                _heiganEruption[GetEruptionSection(go->GetPositionX(), go->GetPositionY())].insert(go);
-                break;
-            default:
-                break;
+        case GO_DISPLAY_ID_HEIGAN_ERUPTION1:
+        case GO_DISPLAY_ID_HEIGAN_ERUPTION2:
+            _heiganEruption[GetEruptionSection(go->GetPositionX(), go->GetPositionY())].insert(go);
+            break;
+        default:
+            break;
         }
 
         switch (go->GetEntry())
         {
-            case GO_SAPPHIRON_GATE:
-                if (GetBossState(BOSS_SAPPHIRON) == DONE)
-                    go->SetGoState(GO_STATE_ACTIVE);
-                break;
-            case GO_LOATHEB_PORTAL:
-                ActivateWingPortal(go, GetBossState(BOSS_LOATHEB));
-                break;
-            case GO_THADDIUS_PORTAL:
-                ActivateWingPortal(go, GetBossState(BOSS_THADDIUS));
-                break;
-            case GO_MAEXXNA_PORTAL:
-                ActivateWingPortal(go, GetBossState(BOSS_MAEXXNA));
-                break;
-            case GO_HORSEMAN_PORTAL:
-                ActivateWingPortal(go, GetBossState(BOSS_HORSEMAN));
-                break;
-            default:
-                break;
+        case GO_SAPPHIRON_GATE:
+            if (GetBossState(BOSS_SAPPHIRON) == DONE)
+                go->SetGoState(GO_STATE_ACTIVE);
+            break;
+        case GO_LOATHEB_PORTAL:
+            ActivateWingPortal(go, GetBossState(BOSS_LOATHEB));
+            break;
+        case GO_THADDIUS_PORTAL:
+            ActivateWingPortal(go, GetBossState(BOSS_THADDIUS));
+            break;
+        case GO_MAEXXNA_PORTAL:
+            ActivateWingPortal(go, GetBossState(BOSS_MAEXXNA));
+            break;
+        case GO_HORSEMAN_PORTAL:
+            ActivateWingPortal(go, GetBossState(BOSS_HORSEMAN));
+            break;
+        default:
+            break;
         }
 
         InstanceScript::OnGameObjectCreate(go);
@@ -306,22 +306,22 @@ public:
     {
         switch (go->GetGOInfo()->displayId)
         {
-            case GO_DISPLAY_ID_HEIGAN_ERUPTION1:
-            case GO_DISPLAY_ID_HEIGAN_ERUPTION2:
-                _heiganEruption[GetEruptionSection(go->GetPositionX(), go->GetPositionY())].erase(go);
-                break;
-            default:
-                break;
+        case GO_DISPLAY_ID_HEIGAN_ERUPTION1:
+        case GO_DISPLAY_ID_HEIGAN_ERUPTION2:
+            _heiganEruption[GetEruptionSection(go->GetPositionX(), go->GetPositionY())].erase(go);
+            break;
+        default:
+            break;
         }
 
         switch (go->GetEntry())
         {
-            case GO_SAPPHIRON_BIRTH:
-                if (Creature* cr = GetCreature(DATA_SAPPHIRON_BOSS))
-                    cr->AI()->DoAction(ACTION_SAPPHIRON_BIRTH);
-                break;
-            default:
-                break;
+        case GO_SAPPHIRON_BIRTH:
+            if (Creature* cr = GetCreature(DATA_SAPPHIRON_BOSS))
+                cr->AI()->DoAction(ACTION_SAPPHIRON_BIRTH);
+            break;
+        default:
+            break;
         }
 
         InstanceScript::OnGameObjectRemove(go);
@@ -331,76 +331,76 @@ public:
     {
         switch (criteria_id)
         {
-            case ACHIEV_CRITERIA_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER_10_PLAYER:
-            case ACHIEV_CRITERIA_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER_25_PLAYER:
-                return _horsemanAchievement;
-            case ACHIEV_CRITERIA_JUST_CANT_GET_ENOUGH_10_PLAYER:
-            case ACHIEV_CRITERIA_JUST_CANT_GET_ENOUGH_25_PLAYER:
-                return _abominationsKilled >= AbominationKillCountReq;
-            case ACHIEV_CRITERIA_MOMMA_SAID_KNOCK_YOU_OUT_10_PLAYER:
-            case ACHIEV_CRITERIA_MOMMA_SAID_KNOCK_YOU_OUT_25_PLAYER:
-                return _faerlinaAchievement;
-            case ACHIEV_CRITERIA_SHOKING_10_PLAYER:
-            case ACHIEV_CRITERIA_SHOKING_25_PLAYER:
-                return _thaddiusAchievement;
-            case ACHIEV_CRITERIA_SPORE_LOSER_10_PLAYER:
-            case ACHIEV_CRITERIA_SPORE_LOSER_25_PLAYER:
-                return _loathebAchievement;
-            case ACHIEV_CRITERIA_THE_SAFETY_DANCE_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_SAFETY_DANCE_25_PLAYER:
-                return _heiganAchievement;
-            case ACHIEV_CRITERIA_SUBTRACTION_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_KELTHUZAD_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GOTHIK_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_ANUB_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GROBBULUS_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_HEIGAN_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_FAERLINA_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_MAEXXNA_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_SAPPHIRON_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_LOATHEB_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GLUTH_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_THADDIUS_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_PATCHWERK_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_RAZUVIOUS_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_NOTH_10_PLAYER:
-                return instance->GetPlayersCountExceptGMs() < TheDedicatedFew10PlayerReq;
-            case ACHIEV_CRITERIA_SUBTRACTION_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_ANUB_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_FAERLINA_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_MAEXXNA_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_PATCHWERK_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GROBBULUS_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GLUTH_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_THADDIUS_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_NOTH_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_HEIGAN_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_LOATHEB_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_RAZUVIOUS_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GOTHIK_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_SAPPHIRON_25_PLAYER:
-            case ACHIEV_CRITERIA_THE_DEDICATED_FEW_KELTHUZAD_25_PLAYER:
-                return instance->GetPlayersCountExceptGMs() < TheDedicatedFew25PlayerReq;
-            case ACHIEV_CRITERIA_THE_HUNDRED_CLUB_10_PLAYER:
-            case ACHIEV_CRITERIA_THE_HUNDRED_CLUB_25_PLAYER:
-                return _sapphironAchievement;
-            case ACHIEV_CRITERIA_THE_UNDYING_KELTHUZAD:
-            case ACHIEV_CRITERIA_THE_UNDYING_THE_FOUR_HORSEMEN:
-            case ACHIEV_CRITERIA_THE_UNDYING_MAEXXNA:
-            case ACHIEV_CRITERIA_THE_UNDYING_LOATHEB:
-            case ACHIEV_CRITERIA_THE_UNDYING_THADDIUS:
-            case ACHIEV_CRITERIA_THE_IMMORTAL_KELTHUZAD:
-            case ACHIEV_CRITERIA_THE_IMMORTAL_THE_FOUR_HORSEMEN:
-            case ACHIEV_CRITERIA_THE_IMMORTAL_MAEXXNA:
-            case ACHIEV_CRITERIA_THE_IMMORTAL_LOATHEB:
-            case ACHIEV_CRITERIA_THE_IMMORTAL_THADDIUS:
-                for (int i = 0; i < MAX_ENCOUNTERS; ++i)
-                    if (GetBossState(i) != DONE)
-                        return false;
+        case ACHIEV_CRITERIA_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER_10_PLAYER:
+        case ACHIEV_CRITERIA_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER_25_PLAYER:
+            return _horsemanAchievement;
+        case ACHIEV_CRITERIA_JUST_CANT_GET_ENOUGH_10_PLAYER:
+        case ACHIEV_CRITERIA_JUST_CANT_GET_ENOUGH_25_PLAYER:
+            return _abominationsKilled >= AbominationKillCountReq;
+        case ACHIEV_CRITERIA_MOMMA_SAID_KNOCK_YOU_OUT_10_PLAYER:
+        case ACHIEV_CRITERIA_MOMMA_SAID_KNOCK_YOU_OUT_25_PLAYER:
+            return _faerlinaAchievement;
+        case ACHIEV_CRITERIA_SHOKING_10_PLAYER:
+        case ACHIEV_CRITERIA_SHOKING_25_PLAYER:
+            return _thaddiusAchievement;
+        case ACHIEV_CRITERIA_SPORE_LOSER_10_PLAYER:
+        case ACHIEV_CRITERIA_SPORE_LOSER_25_PLAYER:
+            return _loathebAchievement;
+        case ACHIEV_CRITERIA_THE_SAFETY_DANCE_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_SAFETY_DANCE_25_PLAYER:
+            return _heiganAchievement;
+        case ACHIEV_CRITERIA_SUBTRACTION_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_KELTHUZAD_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GOTHIK_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_ANUB_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GROBBULUS_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_HEIGAN_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_FAERLINA_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_MAEXXNA_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_SAPPHIRON_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_LOATHEB_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GLUTH_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_THADDIUS_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_PATCHWERK_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_RAZUVIOUS_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_NOTH_10_PLAYER:
+            return instance->GetPlayersCountExceptGMs() < TheDedicatedFew10PlayerReq;
+        case ACHIEV_CRITERIA_SUBTRACTION_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_ANUB_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_FAERLINA_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_MAEXXNA_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_PATCHWERK_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GROBBULUS_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GLUTH_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_THADDIUS_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_NOTH_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_HEIGAN_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_LOATHEB_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_RAZUVIOUS_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_GOTHIK_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_SAPPHIRON_25_PLAYER:
+        case ACHIEV_CRITERIA_THE_DEDICATED_FEW_KELTHUZAD_25_PLAYER:
+            return instance->GetPlayersCountExceptGMs() < TheDedicatedFew25PlayerReq;
+        case ACHIEV_CRITERIA_THE_HUNDRED_CLUB_10_PLAYER:
+        case ACHIEV_CRITERIA_THE_HUNDRED_CLUB_25_PLAYER:
+            return _sapphironAchievement;
+        case ACHIEV_CRITERIA_THE_UNDYING_KELTHUZAD:
+        case ACHIEV_CRITERIA_THE_UNDYING_THE_FOUR_HORSEMEN:
+        case ACHIEV_CRITERIA_THE_UNDYING_MAEXXNA:
+        case ACHIEV_CRITERIA_THE_UNDYING_LOATHEB:
+        case ACHIEV_CRITERIA_THE_UNDYING_THADDIUS:
+        case ACHIEV_CRITERIA_THE_IMMORTAL_KELTHUZAD:
+        case ACHIEV_CRITERIA_THE_IMMORTAL_THE_FOUR_HORSEMEN:
+        case ACHIEV_CRITERIA_THE_IMMORTAL_MAEXXNA:
+        case ACHIEV_CRITERIA_THE_IMMORTAL_LOATHEB:
+        case ACHIEV_CRITERIA_THE_IMMORTAL_THADDIUS:
+            for (int i = 0; i < MAX_ENCOUNTERS; ++i)
+                if (GetBossState(i) != DONE)
+                    return false;
 
-                return !GetPersistentData(PERSISTENT_DATA_IMMORTAL_FAIL);
-            default:
-                return false;
+            return !GetPersistentData(PERSISTENT_DATA_IMMORTAL_FAIL);
+        default:
+            return false;
         }
     }
 
@@ -408,29 +408,29 @@ public:
     {
         switch (id)
         {
-            case DATA_ABOMINATION_KILLED:
-                ++_abominationsKilled;
-                return;
-            case DATA_FRENZY_REMOVED:
-                _faerlinaAchievement = false;
-                return;
-            case DATA_CHARGES_CROSSED:
-                _thaddiusAchievement = false;
-                return;
-            case DATA_SPORE_KILLED:
-                _loathebAchievement = false;
-                return;
-            case DATA_HUNDRED_CLUB:
-                _sapphironAchievement = false;
-                return;
-            case DATA_DANCE_FAIL:
-                _heiganAchievement = false;
-                return;
-            case DATA_HEIGAN_ERUPTION:
-                HeiganEruptSections(data);
-                return;
-            default:
-                return;
+        case DATA_ABOMINATION_KILLED:
+            ++_abominationsKilled;
+            return;
+        case DATA_FRENZY_REMOVED:
+            _faerlinaAchievement = false;
+            return;
+        case DATA_CHARGES_CROSSED:
+            _thaddiusAchievement = false;
+            return;
+        case DATA_SPORE_KILLED:
+            _loathebAchievement = false;
+            return;
+        case DATA_HUNDRED_CLUB:
+            _sapphironAchievement = false;
+            return;
+        case DATA_DANCE_FAIL:
+            _heiganAchievement = false;
+            return;
+        case DATA_HEIGAN_ERUPTION:
+            HeiganEruptSections(data);
+            return;
+        default:
+            return;
         }
     }
 
@@ -438,165 +438,165 @@ public:
     {
         switch (bossId)
         {
-            case BOSS_PATCHWERK:
-            {
-                if (state != IN_PROGRESS)
-                    break;
+        case BOSS_PATCHWERK:
+        {
+            if (state != IN_PROGRESS)
+                break;
 
-                // pull all the trash if not killed
-                if (Creature* patchwerk = GetCreature(DATA_PATCHWERK_BOSS))
+            // pull all the trash if not killed
+            if (Creature* patchwerk = GetCreature(DATA_PATCHWERK_BOSS))
+            {
+                for (auto& itr : _patchwerkRoomTrash)
                 {
-                    for (auto& itr : _patchwerkRoomTrash)
-                    {
-                        Creature* trash = ObjectAccessor::GetCreature(*patchwerk, itr);
-                        if (trash && trash->IsAlive() && !trash->IsInCombat())
-                            trash->AI()->AttackStart(patchwerk->GetVictim());
-                    }
+                    Creature* trash = ObjectAccessor::GetCreature(*patchwerk, itr);
+                    if (trash && trash->IsAlive() && !trash->IsInCombat())
+                        trash->AI()->AttackStart(patchwerk->GetVictim());
                 }
+            }
 
+            break;
+        }
+        case BOSS_HEIGAN:
+        {
+            if (state == NOT_STARTED)
+                _heiganAchievement = true;
+
+            break;
+        }
+        case BOSS_LOATHEB:
+        {
+            switch (state)
+            {
+            case NOT_STARTED:
+                _loathebAchievement = true;
+                break;
+            case DONE:
+                ActivateWingPortal(DATA_LOATHEB_PORTAL);
+                break;
+            default:
                 break;
             }
-            case BOSS_HEIGAN:
-            {
-                if (state == NOT_STARTED)
-                    _heiganAchievement = true;
 
+            break;
+        }
+        case BOSS_FAERLINA:
+        {
+            if (state == NOT_STARTED)
+                _faerlinaAchievement = true;
+
+            break;
+        }
+        case BOSS_MAEXXNA:
+        {
+            if (state == DONE)
+                ActivateWingPortal(DATA_MAEXXNA_PORTAL);
+
+            break;
+        }
+        case BOSS_THADDIUS:
+        {
+            switch (state)
+            {
+            case NOT_STARTED:
+                _thaddiusAchievement = true;
+                break;
+            case DONE:
+                ActivateWingPortal(DATA_THADDIUS_PORTAL);
+                break;
+            default:
                 break;
             }
-            case BOSS_LOATHEB:
-            {
-                switch (state)
-                {
-                    case NOT_STARTED:
-                        _loathebAchievement = true;
-                        break;
-                    case DONE:
-                        ActivateWingPortal(DATA_LOATHEB_PORTAL);
-                        break;
-                    default:
-                        break;
-                }
 
-                break;
-            }
-            case BOSS_FAERLINA:
-            {
-                if (state == NOT_STARTED)
-                    _faerlinaAchievement = true;
-
-                break;
-            }
-            case BOSS_MAEXXNA:
-            {
-                if (state == DONE)
-                    ActivateWingPortal(DATA_MAEXXNA_PORTAL);
-
-                break;
-            }
-            case BOSS_THADDIUS:
-            {
-                switch (state)
-                {
-                    case NOT_STARTED:
-                        _thaddiusAchievement = true;
-                        break;
-                    case DONE:
-                        ActivateWingPortal(DATA_THADDIUS_PORTAL);
-                        break;
-                    default:
-                        break;
-                }
-
-                break;
-            }
-            case BOSS_HORSEMAN:
-            {
-                uint32 horsemanKilled = std::count_if(HorsemanDataGroup.begin(), HorsemanDataGroup.end(), [this](auto&& entry)
+            break;
+        }
+        case BOSS_HORSEMAN:
+        {
+            uint32 horsemanKilled = std::count_if(HorsemanDataGroup.begin(), HorsemanDataGroup.end(), [this](auto&& entry)
                 {
                     Creature* cr = GetCreature(entry);
                     return cr && !cr->IsAlive();
                 });
 
-                switch (state)
+            switch (state)
+            {
+            case NOT_STARTED:
+            {
+                _horsemanAchievement = true;
+
+                if (!horsemanKilled)
+                    break;
+
+                for (auto&& entry : HorsemanDataGroup)
                 {
-                    case NOT_STARTED:
+                    if (Creature* cr = GetCreature(entry))
                     {
-                        _horsemanAchievement = true;
-
-                        if (!horsemanKilled)
-                            break;
-
-                        for (auto&& entry : HorsemanDataGroup)
-                        {
-                            if (Creature* cr = GetCreature(entry))
-                            {
-                                cr->SetPosition(cr->GetHomePosition());
-                                cr->Respawn();
-                            }
-                        }
-
-                        break;
+                        cr->SetPosition(cr->GetHomePosition());
+                        cr->Respawn();
                     }
-                    case IN_PROGRESS:
-                    {
-                        for (auto&& entry : HorsemanDataGroup)
-                            if (Creature* cr = GetCreature(entry))
-                                cr->SetInCombatWithZone();
-
-                        break;
-                    }
-                    case DONE:
-                    {
-                        _events.RescheduleEvent(EVENT_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER, 15s);
-
-                        if (horsemanKilled != HorsemanCount)
-                            return false;
-
-                        // all horsemans are killed
-                        if (Creature* cr = GetCreature(DATA_BARON_RIVENDARE_BOSS))
-                            cr->CastSpell(cr, SPELL_THE_FOUR_HORSEMAN_CREDIT, true);
-
-                        ActivateWingPortal(DATA_HORSEMAN_PORTAL);
-                        break;
-                    }
-                    default:
-                        break;
                 }
 
                 break;
             }
-            case BOSS_SAPPHIRON:
+            case IN_PROGRESS:
             {
-                switch (state)
-                {
-                    case NOT_STARTED:
-                        _sapphironAchievement = true;
-                        break;
-                    case DONE:
-                    {
-                        if (GetPersistentData(PERSISTENT_DATA_KELTHUZAD_DIALOG))
-                            break;
-
-                        StorePersistentData(PERSISTENT_DATA_KELTHUZAD_DIALOG, 1);
-                        SetGoState(DATA_KELTHUZAD_GATE, GO_STATE_READY);
-                        _events.ScheduleEvent(EVENT_FROSTWYRM_WATERFALL_DOOR, 5s);
-                        break;
-                    }
-                    default:
-                        break;
-                }
+                for (auto&& entry : HorsemanDataGroup)
+                    if (Creature* cr = GetCreature(entry))
+                        cr->SetInCombatWithZone();
 
                 break;
             }
-            case BOSS_KELTHUZAD:
+            case DONE:
             {
-                if (state == NOT_STARTED)
-                    _abominationsKilled = 0;
+                _events.RescheduleEvent(EVENT_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER, 15s);
 
+                if (horsemanKilled != HorsemanCount)
+                    return false;
+
+                // all horsemans are killed
+                if (Creature* cr = GetCreature(DATA_BARON_RIVENDARE_BOSS))
+                    cr->CastSpell(cr, SPELL_THE_FOUR_HORSEMAN_CREDIT, true);
+
+                ActivateWingPortal(DATA_HORSEMAN_PORTAL);
                 break;
             }
             default:
                 break;
+            }
+
+            break;
+        }
+        case BOSS_SAPPHIRON:
+        {
+            switch (state)
+            {
+            case NOT_STARTED:
+                _sapphironAchievement = true;
+                break;
+            case DONE:
+            {
+                if (GetPersistentData(PERSISTENT_DATA_KELTHUZAD_DIALOG))
+                    break;
+
+                StorePersistentData(PERSISTENT_DATA_KELTHUZAD_DIALOG, 1);
+                SetGoState(DATA_KELTHUZAD_GATE, GO_STATE_READY);
+                _events.ScheduleEvent(EVENT_FROSTWYRM_WATERFALL_DOOR, 5s);
+                break;
+            }
+            default:
+                break;
+            }
+
+            break;
+        }
+        case BOSS_KELTHUZAD:
+        {
+            if (state == NOT_STARTED)
+                _abominationsKilled = 0;
+
+            break;
+        }
+        default:
+            break;
         }
 
         return InstanceScript::SetBossState(bossId, state);
@@ -608,65 +608,65 @@ public:
 
         switch (_events.ExecuteEvent())
         {
-            case EVENT_THADDIUS_SCREAMS:
-            {
-                if (GetBossState(BOSS_THADDIUS) == DONE)
-                    break;
+        case EVENT_THADDIUS_SCREAMS:
+        {
+            if (GetBossState(BOSS_THADDIUS) == DONE)
+                break;
 
-                instance->PlayDirectSoundToMap(SOUND_SCREAM + urand(0, 3));
-                return _events.ScheduleEvent(EVENT_THADDIUS_SCREAMS, 2min, 2min + 30s);
-            }
-            case EVENT_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER:
-                _horsemanAchievement = false;
-                break;
-            case EVENT_KELTHUZAD_WING_TAUNT:
-                return CreatureTalk(DATA_KELTHUZAD_BOSS, _currentWingTaunt++);
-            case EVENT_HORSEMEN_INTRO1:
-                CreatureTalk(DATA_THANE_KORTHAZZ_BOSS, SAY_HORSEMEN_DIALOG1);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO2, 4500ms);
-            case EVENT_HORSEMEN_INTRO2:
-                CreatureTalk(DATA_SIR_ZELIEK_BOSS, SAY_HORSEMEN_DIALOG1);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO3, 6500ms);
-            case EVENT_HORSEMEN_INTRO3:
-                CreatureTalk(DATA_LADY_BLAUMEUX_BOSS, SAY_HORSEMEN_DIALOG1);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO4, 6500ms);
-            case EVENT_HORSEMEN_INTRO4:
-                CreatureTalk(DATA_BARON_RIVENDARE_BOSS, SAY_HORSEMEN_DIALOG1);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO5, 6500ms);
-            case EVENT_HORSEMEN_INTRO5:
-                CreatureTalk(DATA_LADY_BLAUMEUX_BOSS, SAY_HORSEMEN_DIALOG2);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO6, 6500ms);
-            case EVENT_HORSEMEN_INTRO6:
-                CreatureTalk(DATA_SIR_ZELIEK_BOSS, SAY_HORSEMEN_DIALOG2);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO7, 6500ms);
-            case EVENT_HORSEMEN_INTRO7:
-                CreatureTalk(DATA_THANE_KORTHAZZ_BOSS, SAY_HORSEMEN_DIALOG2);
-                return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO8, 6500ms);
-            case EVENT_HORSEMEN_INTRO8:
-                return CreatureTalk(DATA_BARON_RIVENDARE_BOSS, SAY_HORSEMEN_DIALOG2);
-            case EVENT_FROSTWYRM_WATERFALL_DOOR:
-                SetGoState(DATA_SAPPHIRON_GATE, GO_STATE_ACTIVE);
-                return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK1, 5s);
-            case EVENT_KELTHUZAD_LICH_KING_TALK1:
-                CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG1);
-                return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK2, 10s);
-            case EVENT_KELTHUZAD_LICH_KING_TALK2:
-                CreatureTalk(DATA_LICH_KING_BOSS, SAY_SAPP_DIALOG2_LICH);
-                return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK3, 14s);
-            case EVENT_KELTHUZAD_LICH_KING_TALK3:
-                CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG3);
-                return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK4, 10s);
-            case EVENT_KELTHUZAD_LICH_KING_TALK4:
-                CreatureTalk(DATA_LICH_KING_BOSS, SAY_SAPP_DIALOG4_LICH);
-                return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK5, 12s);
-            case EVENT_KELTHUZAD_LICH_KING_TALK5:
-                CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG5);
-                return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK6, 5s);
-            case EVENT_KELTHUZAD_LICH_KING_TALK6:
-                CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG6);
-                return SetGoState(DATA_KELTHUZAD_GATE, GO_STATE_ACTIVE);
-            default:
-                break;
+            instance->PlayDirectSoundToMap(SOUND_SCREAM + urand(0, 3));
+            return _events.ScheduleEvent(EVENT_THADDIUS_SCREAMS, 2min, 2min + 30s);
+        }
+        case EVENT_AND_THEY_WOULD_ALL_GO_DOWN_TOGETHER:
+            _horsemanAchievement = false;
+            break;
+        case EVENT_KELTHUZAD_WING_TAUNT:
+            return CreatureTalk(DATA_KELTHUZAD_BOSS, _currentWingTaunt++);
+        case EVENT_HORSEMEN_INTRO1:
+            CreatureTalk(DATA_THANE_KORTHAZZ_BOSS, SAY_HORSEMEN_DIALOG1);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO2, 4500ms);
+        case EVENT_HORSEMEN_INTRO2:
+            CreatureTalk(DATA_SIR_ZELIEK_BOSS, SAY_HORSEMEN_DIALOG1);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO3, 6500ms);
+        case EVENT_HORSEMEN_INTRO3:
+            CreatureTalk(DATA_LADY_BLAUMEUX_BOSS, SAY_HORSEMEN_DIALOG1);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO4, 6500ms);
+        case EVENT_HORSEMEN_INTRO4:
+            CreatureTalk(DATA_BARON_RIVENDARE_BOSS, SAY_HORSEMEN_DIALOG1);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO5, 6500ms);
+        case EVENT_HORSEMEN_INTRO5:
+            CreatureTalk(DATA_LADY_BLAUMEUX_BOSS, SAY_HORSEMEN_DIALOG2);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO6, 6500ms);
+        case EVENT_HORSEMEN_INTRO6:
+            CreatureTalk(DATA_SIR_ZELIEK_BOSS, SAY_HORSEMEN_DIALOG2);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO7, 6500ms);
+        case EVENT_HORSEMEN_INTRO7:
+            CreatureTalk(DATA_THANE_KORTHAZZ_BOSS, SAY_HORSEMEN_DIALOG2);
+            return _events.ScheduleEvent(EVENT_HORSEMEN_INTRO8, 6500ms);
+        case EVENT_HORSEMEN_INTRO8:
+            return CreatureTalk(DATA_BARON_RIVENDARE_BOSS, SAY_HORSEMEN_DIALOG2);
+        case EVENT_FROSTWYRM_WATERFALL_DOOR:
+            SetGoState(DATA_SAPPHIRON_GATE, GO_STATE_ACTIVE);
+            return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK1, 5s);
+        case EVENT_KELTHUZAD_LICH_KING_TALK1:
+            CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG1);
+            return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK2, 10s);
+        case EVENT_KELTHUZAD_LICH_KING_TALK2:
+            CreatureTalk(DATA_LICH_KING_BOSS, SAY_SAPP_DIALOG2_LICH);
+            return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK3, 14s);
+        case EVENT_KELTHUZAD_LICH_KING_TALK3:
+            CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG3);
+            return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK4, 10s);
+        case EVENT_KELTHUZAD_LICH_KING_TALK4:
+            CreatureTalk(DATA_LICH_KING_BOSS, SAY_SAPP_DIALOG4_LICH);
+            return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK5, 12s);
+        case EVENT_KELTHUZAD_LICH_KING_TALK5:
+            CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG5);
+            return _events.ScheduleEvent(EVENT_KELTHUZAD_LICH_KING_TALK6, 5s);
+        case EVENT_KELTHUZAD_LICH_KING_TALK6:
+            CreatureTalk(DATA_KELTHUZAD_BOSS, SAY_SAPP_DIALOG6);
+            return SetGoState(DATA_KELTHUZAD_GATE, GO_STATE_ACTIVE);
+        default:
+            break;
         }
     }
 
@@ -695,7 +695,7 @@ private:
 class npc_mr_bigglesworth : public NullCreatureAI
 {
 public:
-    npc_mr_bigglesworth(Creature* c) : NullCreatureAI(c) { }
+    npc_mr_bigglesworth(Creature* c) : NullCreatureAI(c) {}
 
     void JustDied(Unit* /*killer*/) override
     {
@@ -714,7 +714,7 @@ public:
 class npc_living_poison : public NullCreatureAI
 {
 public:
-    npc_living_poison(Creature* c) : NullCreatureAI(c) { }
+    npc_living_poison(Creature* c) : NullCreatureAI(c) {}
 
     void UpdateAI(uint32 /*diff*/) override
     {
@@ -726,7 +726,7 @@ public:
 class npc_naxxramas_trigger : public NullCreatureAI
 {
 public:
-    npc_naxxramas_trigger(Creature* c) : NullCreatureAI(c) { }
+    npc_naxxramas_trigger(Creature* c) : NullCreatureAI(c) {}
 
     void Reset() override
     {
@@ -739,20 +739,20 @@ public:
         _events.Update(diff);
         switch (_events.ExecuteEvent())
         {
-            case EVENT_SUMMON_LIVING_POISON:
-            {
-                for (LivingPoisonData const& entry : LivingPoisonDataList)
-                    if (Creature* cr = me->SummonCreature(NPC_LIVING_POISON, entry.Start, TEMPSUMMON_TIMED_DESPAWN, entry.DespawnTime))
-                    {
-                        cr->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
-                        cr->GetMotionMaster()->MovePoint(0, entry.End, false);
-                    }
+        case EVENT_SUMMON_LIVING_POISON:
+        {
+            for (LivingPoisonData const& entry : LivingPoisonDataList)
+                if (Creature* cr = me->SummonCreature(NPC_LIVING_POISON, entry.Start, TEMPSUMMON_TIMED_DESPAWN, entry.DespawnTime))
+                {
+                    cr->AddUnitMovementFlag(MOVEMENTFLAG_WALKING);
+                    cr->GetMotionMaster()->MovePoint(0, entry.End, false);
+                }
 
-                _events.Repeat(5s);
-                break;
-            }
-            default:
-                break;
+            _events.Repeat(5s);
+            break;
+        }
+        default:
+            break;
         }
     }
 
@@ -763,7 +763,7 @@ private:
 class at_naxxramas_hub_portal : public AreaTriggerScript
 {
 public:
-    at_naxxramas_hub_portal() : AreaTriggerScript("at_naxxramas_hub_portal") { }
+    at_naxxramas_hub_portal() : AreaTriggerScript("at_naxxramas_hub_portal") {}
 
     bool OnTrigger(Player* player, AreaTrigger const* /*trigger*/) override
     {
@@ -774,8 +774,8 @@ public:
         if (!instance)
             return false;
 
-        if ((instance->GetBossState(BOSS_MAEXXNA)  != DONE) ||
-            (instance->GetBossState(BOSS_LOATHEB)  != DONE) ||
+        if ((instance->GetBossState(BOSS_MAEXXNA) != DONE) ||
+            (instance->GetBossState(BOSS_LOATHEB) != DONE) ||
             (instance->GetBossState(BOSS_THADDIUS) != DONE) ||
             (instance->GetBossState(BOSS_HORSEMAN) != DONE))
             return false;

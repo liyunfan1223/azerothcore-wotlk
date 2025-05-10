@@ -1740,7 +1740,10 @@ namespace lfg
                     // if player is debugging, don't add dungeon cooldown
                     if (!m_Testing)
                     {
-                        player->AddAura(LFG_SPELL_DUNGEON_COOLDOWN, player);
+                        if(sWorld->getBoolConfig(CONFIG_LFG_ENABLE_COOLDOWN))
+                        {
+                            player->AddAura(LFG_SPELL_DUNGEON_COOLDOWN, player);
+                        }                        
                     }
                 }
 
