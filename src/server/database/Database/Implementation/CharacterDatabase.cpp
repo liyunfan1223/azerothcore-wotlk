@@ -236,8 +236,14 @@ void CharacterDatabaseConnection::DoPrepareStatements()
     PrepareStatement(CHAR_DEL_EQUIP_SET, "DELETE FROM character_equipmentsets WHERE setguid=?", CONNECTION_ASYNC);
 
     // Auras
-    PrepareStatement(CHAR_INS_AURA, "INSERT INTO character_aura (guid, casterGuid, itemGuid, spell, effectMask, recalculateMask, stackcount, amount0, amount1, amount2, base_amount0, base_amount1, base_amount2, maxDuration, remainTime, remainCharges) "
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", CONNECTION_ASYNC);
+    PrepareStatement(CHAR_INS_AURA,
+                    "INSERT INTO character_aura (guid, casterGuid, itemGuid, spell, effectMask, recalculateMask, stackcount, amount0, amount1, amount2, base_amount0, base_amount1, base_amount2, maxDuration, remainTime, remainCharges) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+                    "ON DUPLICATE KEY UPDATE "
+                    "casterGuid=VALUES(casterGuid), itemGuid=VALUES(itemGuid), spell=VALUES(spell), effectMask=VALUES(effectMask), recalculateMask=VALUES(recalculateMask), "
+                    "stackcount=VALUES(stackcount), amount0=VALUES(amount0), amount1=VALUES(amount1), amount2=VALUES(amount2), base_amount0=VALUES(base_amount0), "
+                    "base_amount1=VALUES(base_amount1), base_amount2=VALUES(base_amount2), maxDuration=VALUES(maxDuration), remainTime=VALUES(remainTime), remainCharges=VALUES(remainCharges)",
+                    CONNECTION_ASYNC);
 
     // Account data
     PrepareStatement(CHAR_SEL_ACCOUNT_DATA, "SELECT type, time, data FROM account_data WHERE accountId = ?", CONNECTION_ASYNC);
