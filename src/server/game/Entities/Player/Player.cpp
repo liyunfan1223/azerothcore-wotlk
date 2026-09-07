@@ -14540,8 +14540,19 @@ void Player::AddKnownCurrency(uint32 itemId)
         SetFlag64(PLAYER_FIELD_KNOWN_CURRENCIES, (1LL << (ctEntry->BitIndex - 1)));
 }
 
+bool Player::IsPetNeedBeTemporaryUnsummoned() const
+{
+    if (sWorld->getBoolConfig(CONFIG_PET_KEEP_ON_MOUNT))
+    {
+        return GetSession()->PlayerLogout() || !IsInWorld() || !IsAlive() || GetVehicle() || IsBeingTeleported();
+    }
+
+    return GetSession()->PlayerLogout() || !IsInWorld() || !IsAlive() || IsMounted()/*+in flight*/ || GetVehicle() || IsBeingTeleported();
+}
+
 void Player::UnsummonPetTemporaryIfAny()
 {
+
     Pet* pet = GetPet();
     if (!pet)
         return;

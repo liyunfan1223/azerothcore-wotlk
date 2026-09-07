@@ -10530,7 +10530,7 @@ void Unit::Mount(uint32 mount, uint32 VehicleId, uint32 creatureEntry)
             // don't unsummon pet in arena but SetFlag UNIT_FLAG_STUNNED to disable pet's interface
             if (bg && bg->isArena())
                 pet->SetUnitFlag(UNIT_FLAG_STUNNED);
-            else
+            else if (!sWorld->getBoolConfig(CONFIG_PET_KEEP_ON_MOUNT))
                 player->UnsummonPetTemporaryIfAny();
         }
 

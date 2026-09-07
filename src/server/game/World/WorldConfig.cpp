@@ -532,6 +532,8 @@ void WorldConfig::BuildConfigCache()
 
     SetConfigValue<bool>(CONFIG_ALLOWS_RANK_MOD_FOR_PET_HEALTH, "Pet.RankMod.Health", true);
 
+    SetConfigValue<bool>(CONFIG_PET_KEEP_ON_MOUNT, "Pet.KeepOnMount", true);
+
     SetConfigValue<bool>(CONFIG_MUNCHING_BLIZZLIKE, "MunchingBlizzlike.Enabled", true);
 
     SetConfigValue<bool>(CONFIG_ENABLE_DAZE, "Daze.Enabled", true);

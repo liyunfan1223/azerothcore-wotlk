@@ -2779,6 +2779,15 @@ Death.Bones.BattlegroundOrArena = 1
 
 Pet.RankMod.Health = 1
 
+#     Pet.KeepOnMount
+#        Description: Pets stay summoned and follow their owner while mounted
+#                     instead of being temporarily unsummoned on mount.
+#        Default:     1 - (Enabled, pets run alongside mounted owners)
+#                     0 - (Disabled, Blizzlike - pets are unsummoned on mount
+#                          and resummoned on dismount)
+#
+Pet.KeepOnMount = 1
+
 #
 ###################################################################################################
 
